@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Crypt;
 
 class Event extends Model
 {
@@ -47,19 +46,9 @@ class Event extends Model
         return $this->hasMany(Participant::class);
     }
 
-    public function setGradingPasswordAttribute(?string $value): void
-    {
-        $this->attributes['grading_password'] = $value ? Crypt::encryptString($value) : null;
-    }
-
-    public function getDecryptedGradingPasswordAttribute(): ?string
-    {
-        return $this->grading_password ? Crypt::decryptString($this->grading_password) : null;
-    }
-
     public function verifyGradingPassword(string $password): bool
     {
-        return $this->decrypted_grading_password === $password;
+        return $this->grading_password === $password;
     }
 
     public function hasStarted(): bool

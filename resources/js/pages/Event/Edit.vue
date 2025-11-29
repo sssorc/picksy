@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { store } from '@/actions/App/Http/Controllers/EventController';
+import AlertError from '@/components/AlertError.vue';
+import AlertSuccess from '@/components/AlertSuccess.vue';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { AlertError } from '@/components';
-import { Head, useForm } from '@inertiajs/vue3';
+import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
-import { ref } from 'vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import axios from 'axios';
+import { computed, ref } from 'vue';
 
 interface Event {
     id?: number;
@@ -46,35 +48,29 @@ const form = useForm({
 
 const saving = ref(false);
 const saveError = ref('');
+const saveSuccess = ref('');
+
+const formErrors = computed(() => {
+    const errors = Object.values(form.errors);
+    return errors.length > 0 ? errors.flat() : null;
+});
 
 const handleSubmit = async () => {
     saving.value = true;
     saveError.value = '';
+    saveSuccess.value = '';
 
     try {
-        const response = await fetch(store().url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-            },
-            body: JSON.stringify(form.data()),
-        });
+        await axios.post(store().url, form.data());
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            if (data.errors) {
-                form.setError(data.errors);
-            } else {
-                saveError.value = data.message || 'Failed to save event';
-            }
+        form.clearErrors();
+        saveSuccess.value = 'Event saved successfully!';
+    } catch (error: any) {
+        if (error.response?.data?.errors) {
+            form.setError(error.response.data.errors);
         } else {
-            // Success
-            form.clearErrors();
+            saveError.value = error.response?.data?.message || 'Failed to save event';
         }
-    } catch (error) {
-        saveError.value = 'An error occurred while saving';
     } finally {
         saving.value = false;
     }
@@ -89,114 +85,49 @@ const handleSubmit = async () => {
             <Card>
                 <CardHeader>
                     <CardTitle>Event Details</CardTitle>
-                    <CardDescription>
-                        Set up your event information. This will be visible to participants.
-                    </CardDescription>
+                    <CardDescription> Set up your event information. This will be visible to participants. </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <AlertError v-if="saveError" class="mb-4">
-                        {{ saveError }}
-                    </AlertError>
-
                     <form @submit.prevent="handleSubmit" class="space-y-6">
                         <div class="space-y-2">
                             <Label for="title">Event Title *</Label>
-                            <Input
-                                id="title"
-                                v-model="form.title"
-                                type="text"
-                                placeholder="e.g., John & Jane's Wedding"
-                                :disabled="saving"
-                                required
-                            />
-                            <p v-if="form.errors.title" class="text-sm text-red-500">
-                                {{ form.errors.title }}
-                            </p>
+                            <Input id="title" v-model="form.title" type="text" placeholder="e.g., John & Jane's Wedding" :disabled="saving" required />
                         </div>
 
                         <div class="space-y-2">
                             <Label for="intro_text">Intro Text</Label>
-                            <Textarea
-                                id="intro_text"
-                                v-model="form.intro_text"
-                                placeholder="Optional welcome message for participants"
-                                :disabled="saving"
-                                rows="3"
-                            />
-                            <p v-if="form.errors.intro_text" class="text-sm text-red-500">
-                                {{ form.errors.intro_text }}
-                            </p>
+                            <Textarea id="intro_text" v-model="form.intro_text" placeholder="Optional welcome message for participants" :disabled="saving" rows="3" />
                         </div>
 
                         <div class="space-y-2">
                             <Label for="slug">Event Path *</Label>
-                            <Input
-                                id="slug"
-                                v-model="form.slug"
-                                type="text"
-                                placeholder="e.g., john-jane-wedding"
-                                :disabled="saving || event?.slug"
-                                required
-                            />
+                            <Input id="slug" v-model="form.slug" type="text" placeholder="e.g., john-jane-wedding" :disabled="saving || event?.slug" required />
                             <p class="text-sm text-gray-500">
                                 {{ event?.slug ? 'Path cannot be changed after creation' : 'Use lowercase letters, numbers, and hyphens only' }}
-                            </p>
-                            <p v-if="form.errors.slug" class="text-sm text-red-500">
-                                {{ form.errors.slug }}
                             </p>
                         </div>
 
                         <div class="space-y-2">
                             <Label for="start_datetime">Event Start Date & Time *</Label>
-                            <Input
-                                id="start_datetime"
-                                v-model="form.start_datetime"
-                                type="datetime-local"
-                                :disabled="saving"
-                                required
-                            />
-                            <p class="text-sm text-gray-500">
-                                Participants cannot submit picks before this time
-                            </p>
-                            <p v-if="form.errors.start_datetime" class="text-sm text-red-500">
-                                {{ form.errors.start_datetime }}
-                            </p>
+                            <Input id="start_datetime" v-model="form.start_datetime" type="datetime-local" :disabled="saving" required />
+                            <p class="text-sm text-gray-500">Participants cannot submit picks before this time</p>
                         </div>
 
                         <div class="space-y-2">
                             <Label for="password">Event Password (Optional)</Label>
-                            <Input
-                                id="password"
-                                v-model="form.password"
-                                type="password"
-                                placeholder="Leave blank for no password"
-                                :disabled="saving"
-                            />
-                            <p class="text-sm text-gray-500">
-                                Participants will need this password to access your event
-                            </p>
-                            <p v-if="form.errors.password" class="text-sm text-red-500">
-                                {{ form.errors.password }}
-                            </p>
+                            <Input id="password" v-model="form.password" type="text" placeholder="Leave blank for no password" :disabled="saving" />
+                            <p class="text-sm text-gray-500">Participants will need this password to access your event</p>
                         </div>
 
                         <div class="space-y-2">
                             <Label for="grading_password">Grading Password *</Label>
-                            <Input
-                                id="grading_password"
-                                v-model="form.grading_password"
-                                type="password"
-                                placeholder="Required for grading questions"
-                                :disabled="saving"
-                                required
-                            />
-                            <p class="text-sm text-gray-500">
-                                This password is required to grade questions during the event
-                            </p>
-                            <p v-if="form.errors.grading_password" class="text-sm text-red-500">
-                                {{ form.errors.grading_password }}
-                            </p>
+                            <Input id="grading_password" v-model="form.grading_password" type="text" placeholder="Required for grading questions" :disabled="saving" required />
+                            <p class="text-sm text-gray-500">This password is required to grade questions during the event</p>
                         </div>
+
+                        <AlertError v-if="saveError" :errors="[saveError]" class="mb-4" />
+                        <AlertError v-else-if="formErrors" title="Error saving event" :errors="formErrors" class="mb-4" />
+                        <AlertSuccess v-else-if="saveSuccess" :message="saveSuccess" class="mb-4" />
 
                         <div class="flex gap-2">
                             <Button type="submit" :disabled="saving">
@@ -209,4 +140,3 @@ const handleSubmit = async () => {
         </div>
     </AppLayout>
 </template>
-
