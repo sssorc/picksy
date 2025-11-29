@@ -1,0 +1,111 @@
+---
+alwaysApply: true
+---
+
+# Overview
+
+This app will be a website where users and register, create, and finally purchase, and publish a list of multiple-choice questions associated with an event. People at the event can then visit a dedicated URL and submit their answers to the questions and view a leaderboard to see who got the most correct. The main use for this is for "prop bets" for a wedding - similar to how a sportsbook has prop bets for a sporting event. Questions may be like "How long will the best man's speech ber?" or "What song will be played for the frist dance?" However, the app is flexible enough that one could use it for other kinds of events.
+
+## Key Concepts
+
+### Users
+
+Users will register with laravels native authentication system.
+
+### Events
+
+A user has an event with a start date/time. Answers ("picks") can't be submitted before that datetime. The event will have a unique slug that is set by the user and used as the path in the URL. It may also have an optional password required for participants.
+
+### Questions
+
+The user can have up to 16 questions for the event. They are multiple choice with a minimum of 2 and a maximum of 6 answers. An event can have a maximum of 16 questions. There is also an optional tie breaker question which has a text input answer and does not count towards the 16 maximum.
+
+### Participants
+
+A participant is someone that submits picks to the event questions craeted by the user. They do not have to sign up. They will visit the URL, enter a password (optional), and enter their first and last name. This must be unique for the event and validated. A cookie will keep track of returning participants. After entering their name, a participant can view two pages: "Picks" and "Leaderboard"
+
+### Picks
+
+A participant submits their picks for the all event questions at once. All questions are required. They can only submit once and can't change picks. Participants also can't submit picks once any of the questions have been graded.
+
+### Grading
+
+There will be a page to "grade" questions i.e. select the correct answer for questions, at /<slug>/grade. Thsis will be password protected by a password set by the User and will not require auth. This is so someone other than the user can grade questions (e.g. a friend at a wedding, so the groom who set it up doesn't have to bother with it). Questions can be graded over time - they don't have to be graded all at once. Ideally, they will be graded as events related to the questions occur.
+
+### Leaderboard
+
+After submitting their picks, participants can view a leaderboard which displays the names of all participants and the number of questions correct their submissions have. The leaderboard will also display how many questions are still "open" i.e. not graded yet.
+
+### My picks
+
+After submitting their picks, the "picks" page, which previously held questions that they selected answer for and submitted, will now display all the questions with their answers and the user's pick highlighted. It will also show whether it is correct or incorect if the answer has been graded. If incorrect, the correct asnwer should be indicated.
+
+### Preview
+
+An authenticated user who is the owner of an event should be able to preview the "front end" of the app. This includes viewing the page where users will submit questions. You cannot actually sbumit picks while in preview mode
+
+## App Pages
+
+### Authenticated pages
+
+These are all the pages an authenticated account has access to:
+
+- Account /account
+- Event /event
+- Questions /questions
+- Publish /publish
+- Preview /preview/<event-slug>
+
+#### Account page
+
+Here a user can change their password.
+
+#### Event page
+
+On this page a user can set:
+
+- Event title (text field, required)
+- Intro text (textarea, optional)
+- Event Path (text, required, unique, can't be changed once set)
+- Event password (text, optional)
+- Grading password (text, required)
+
+Saving this page will POST to an /event api endpoint for asynchronous saving.
+
+#### Questions page
+
+On this page a user can create, delete, edit, and re-order questions and answers. There is a max of 16 questions and a max of 6 answers per question. Questions are text fields.
+
+A user can also quickly add from a bank of pre-built "popular qustions". Some of these will populate with just question and no answers, while others will include answers.
+
+There will be a save button that submits and saves changes. There is no auto-save.
+
+Saving this page will POST to an /event/questions api endpoint for asynchronous saving.
+
+### Publish page
+
+Before publishing, this page will take the payment. When the payment is made the event publishes. Will display the following after publishing:
+
+- "Your event is published at <url>"
+- "Submissions accepted starting <time>"
+- QR code that links to the event
+- a preview link
+
+### Participant pages
+
+These are the pages that any public participant (assuming they have the password if necessary) can view for an event. The grade page will require the 'grading password' set by the user on the 'Publish' page. 'If the user set a password for the event on the 'Event' page, all others will gated by password. A user shouldn't have to enter the password multiple times.
+
+- Enter name /<event_slug>
+- Picks /<event_slug>/picks
+- Leaderboard /<event_slug>/leaderboard
+- Grade /<event_slug>/grade
+
+## Other functionality
+
+### Cleanup
+
+Events and their associated questions and picks should be deleted after 60 days of the event.
+
+### Payment and Publishing
+
+A user must pay to publish their event. I plan to use stripe for this. An event is only published once. Any changes to questions or event data will take hold once saved. There is no need to 're-publish' the event after making changes. However, the event is not accessible until it is paid for and published.
