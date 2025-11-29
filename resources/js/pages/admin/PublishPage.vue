@@ -1,0 +1,26 @@
+<script setup lang="ts">
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { Head } from '@inertiajs/vue3';
+
+async function handleSubmit() {
+    console.log('submit');
+}
+</script>
+<template>
+    <Head title="Questions" />
+
+    <AppLayout>
+        <div class="flex h-full flex-1 flex-col gap-4 p-4">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Publish</CardTitle>
+                    <CardDescription>Publish your event and make it available to participants.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form @submit.prevent="handleSubmit" class="space-y-6">TODO</form>
+                </CardContent>
+            </Card>
+        </div>
+    </AppLayout>
+</template>

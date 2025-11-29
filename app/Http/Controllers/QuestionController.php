@@ -21,7 +21,7 @@ class QuestionController extends Controller
                 ->with('error', 'Please create your event details first.');
         }
 
-        return Inertia::render('Questions/Index', [
+        return Inertia::render('admin/QuestionsPage', [
             'event' => $event,
             'popularQuestions' => $this->getPopularQuestions(),
         ]);

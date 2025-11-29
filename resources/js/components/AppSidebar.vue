@@ -3,6 +3,8 @@ import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { edit as event } from '@/routes/event';
+import { index as publish } from '@/routes/publish';
+import { index as questions } from '@/routes/questions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import { LayoutGrid } from 'lucide-vue-next';
@@ -12,6 +14,16 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Event',
         href: event(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Questions',
+        href: questions(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Publish',
+        href: publish(),
         icon: LayoutGrid,
     },
 ];

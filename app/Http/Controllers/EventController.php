@@ -13,7 +13,7 @@ class EventController extends Controller
     {
         $event = auth()->user()->event()->with('questions.answers')->first();
 
-        return Inertia::render('Event/Edit', [
+        return Inertia::render('admin/EventPage', [
             'event' => $event,
         ]);
     }

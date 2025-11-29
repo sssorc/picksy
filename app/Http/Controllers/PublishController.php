@@ -6,12 +6,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\RedirectResponse;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
 
 class PublishController extends Controller
 {
-    public function index(): Response
+    public function index(): RedirectResponse|Response
     {
         $event = auth()->user()->event()->with('questions')->first();
 
@@ -25,7 +26,7 @@ class PublishController extends Controller
                 ->with('error', 'Please add at least one question before publishing.');
         }
 
-        return Inertia::render('Publish/Index', [
+        return Inertia::render('admin/PublishPage', [
             'event' => $event,
             'isPublished' => $event->is_published,
         ]);

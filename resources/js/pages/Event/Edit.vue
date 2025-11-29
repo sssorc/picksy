@@ -55,7 +55,7 @@ const formErrors = computed(() => {
     return errors.length > 0 ? errors.flat() : null;
 });
 
-const handleSubmit = async () => {
+async function handleSubmit() {
     saving.value = true;
     saveError.value = '';
     saveSuccess.value = '';
@@ -74,7 +74,7 @@ const handleSubmit = async () => {
     } finally {
         saving.value = false;
     }
-};
+}
 </script>
 
 <template>
