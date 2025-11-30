@@ -74,6 +74,35 @@ function deleteQuestion() {
     }
 }
 
+// Drag and drop for reordering answers
+const draggedAnswerIndex = ref<number | null>(null);
+
+function handleAnswerDragStart(index: number) {
+    draggedAnswerIndex.value = index;
+}
+
+function handleAnswerDragOver(event: DragEvent, index: number) {
+    event.preventDefault();
+    if (draggedAnswerIndex.value === null || draggedAnswerIndex.value === index) return;
+
+    // Reorder the array
+    const draggedAnswer = answers.value[draggedAnswerIndex.value];
+    answers.value.splice(draggedAnswerIndex.value, 1);
+    answers.value.splice(index, 0, draggedAnswer);
+
+    // Update dragged index to the new position
+    draggedAnswerIndex.value = index;
+}
+
+function handleAnswerDrop() {
+    draggedAnswerIndex.value = null;
+    // Reorder all answers
+    answers.value.forEach((a, i) => {
+        a.order = i;
+    });
+    emitUpdate();
+}
+
 function emitUpdate() {
     emit('update', {
         ...props.question,
@@ -99,7 +128,17 @@ function emitUpdate() {
             </div>
             <slot />
             <div v-if="!question.is_tiebreaker" class="mt-2 w-sm space-y-2 pl-1">
-                <QuestionAnswer v-for="(answer, index) in answers" :key="answer.id || `new-${index}`" :answer="answer" @update="updateAnswer(index, $event)" @delete="deleteAnswer(index)" />
+                <QuestionAnswer
+                    v-for="(answer, index) in answers"
+                    :key="answer.id || `new-${index}`"
+                    :answer="answer"
+                    :is-dragging="draggedAnswerIndex === index"
+                    @update="updateAnswer(index, $event)"
+                    @delete="deleteAnswer(index)"
+                    @drag-start="handleAnswerDragStart(index)"
+                    @drag-over="handleAnswerDragOver($event, index)"
+                    @drop="handleAnswerDrop"
+                />
                 <button
                     v-if="canAddAnswer"
                     type="button"

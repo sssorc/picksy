@@ -53,6 +53,10 @@ const formErrors = ref<string[]>([]);
 
 const questionCount = computed(() => regularQuestions.value.length);
 
+const disableSave = computed(() => {
+    return regularQuestions.value.some((q) => q.question_text.trim() === '' || q.answers.some((a) => a.answer_text.trim() === ''));
+});
+
 function addQuestion() {
     if (questionCount.value >= 16) return;
 
@@ -126,7 +130,7 @@ async function saveQuestions() {
             </div>
 
             <div class="flex justify-end">
-                <Button type="button" :disabled="saving" @click="saveQuestions">
+                <Button type="button" :disabled="saving || disableSave" @click="saveQuestions">
                     {{ saving ? 'Saving...' : 'Save Questions' }}
                 </Button>
             </div>

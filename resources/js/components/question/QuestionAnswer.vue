@@ -7,11 +7,15 @@ const props = defineProps<{
         answer_text: string;
         order: number;
     };
+    isDragging?: boolean;
 }>();
 
 const emit = defineEmits<{
     update: [answer: typeof props.answer];
     delete: [];
+    dragStart: [];
+    dragOver: [event: DragEvent];
+    drop: [];
 }>();
 
 const answerText = ref(props.answer.answer_text);
@@ -35,10 +39,33 @@ function updateAnswerText(event: Event) {
 function deleteAnswer() {
     emit('delete');
 }
+
+function handleDragStart(event: DragEvent) {
+    emit('dragStart');
+    if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = 'move';
+    }
+}
+
+function handleDragOver(event: DragEvent) {
+    emit('dragOver', event);
+}
+
+function handleDrop(event: DragEvent) {
+    event.preventDefault();
+    emit('drop');
+}
 </script>
 
 <template>
-    <div class="group relative flex ring-1 ring-stone-200">
+    <div 
+        draggable="true"
+        class="group relative flex ring-1 ring-stone-200 transition-opacity"
+        :class="{ 'opacity-50': isDragging }"
+        @dragstart="handleDragStart"
+        @dragover="handleDragOver"
+        @drop="handleDrop"
+    >
         <button type="button" class="absolute top-0 right-full bottom-0 flex cursor-move items-center justify-center bg-stone-100 px-1 opacity-0 group-hover:opacity-100" tabindex="-1" title="Drag to reorder">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                 <path d="M5.7 9.3 3 12m0 0 2.7 2.7M3 12h18M9.3 5.7 12 3m0 0 2.7 2.7M12 3v18m2.7-2.7L12 21m0 0-2.7-2.7m9-9L21 12m0 0-2.7 2.7" />
