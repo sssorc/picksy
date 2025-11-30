@@ -15,6 +15,13 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon;
     isActive?: boolean;
+    status?: 'open' | 'complete' | 'locked';
+}
+
+export interface EventStatus {
+    hasEvent: boolean;
+    hasQuestions: boolean;
+    isPublished: boolean;
 }
 
 export type AppPageProps<
@@ -24,6 +31,7 @@ export type AppPageProps<
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    eventStatus: EventStatus | null;
 };
 
 export interface User {

@@ -18,7 +18,7 @@ class QuestionController extends Controller
         $event = auth()->user()->event()->with('questions.answers')->first();
 
         if (! $event) {
-            return redirect()->route('event.edit');
+            return redirect()->back();
         }
 
         return Inertia::render('admin/QuestionsPage', [

@@ -5,28 +5,56 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { edit as event } from '@/routes/event';
 import { index as publish } from '@/routes/publish';
 import { index as questions } from '@/routes/questions';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { LayoutGrid } from 'lucide-vue-next';
+import { type EventStatus, type NavItem } from '@/types';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Event',
-        href: event(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Questions',
-        href: questions(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Publish',
-        href: publish(),
-        icon: LayoutGrid,
-    },
-];
+const page = usePage();
+
+const eventStatus = computed(() => page.props.eventStatus as EventStatus | null);
+
+const mainNavItems = computed((): NavItem[] => {
+    const status = eventStatus.value;
+
+    // Default status if no event status
+    if (!status) {
+        return [
+            { title: 'Event', href: event(), status: 'open' },
+            { title: 'Questions', href: questions(), status: 'locked' },
+            { title: 'Publish', href: publish(), status: 'locked' },
+        ];
+    }
+
+    // Event status: no event created = open, event created = complete
+    const eventItemStatus = status.hasEvent ? 'complete' : 'open';
+
+    // Questions status: no event = locked, event but no questions = open, questions saved = complete
+    let questionsItemStatus: 'open' | 'complete' | 'locked';
+    if (!status.hasEvent) {
+        questionsItemStatus = 'locked';
+    } else if (!status.hasQuestions) {
+        questionsItemStatus = 'open';
+    } else {
+        questionsItemStatus = 'complete';
+    }
+
+    // Publish status: no questions = locked, questions saved = open, event published = complete
+    let publishItemStatus: 'open' | 'complete' | 'locked';
+    if (!status.hasQuestions) {
+        publishItemStatus = 'locked';
+    } else if (!status.isPublished) {
+        publishItemStatus = 'open';
+    } else {
+        publishItemStatus = 'complete';
+    }
+
+    return [
+        { title: 'Event', href: event(), status: eventItemStatus },
+        { title: 'Questions', href: questions(), status: questionsItemStatus },
+        { title: 'Publish', href: publish(), status: publishItemStatus },
+    ];
+});
 </script>
 
 <template>

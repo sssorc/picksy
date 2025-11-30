@@ -38,6 +38,28 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        $eventStatus = null;
+
+        if ($request->user()) {
+            $event = $request->user()->event()->first();
+
+            if ($event) {
+                $hasQuestions = $event->questions()->where('is_tiebreaker', false)->exists();
+
+                $eventStatus = [
+                    'hasEvent' => true,
+                    'hasQuestions' => $hasQuestions,
+                    'isPublished' => $event->is_published,
+                ];
+            } else {
+                $eventStatus = [
+                    'hasEvent' => false,
+                    'hasQuestions' => false,
+                    'isPublished' => false,
+                ];
+            }
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -46,6 +68,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'eventStatus' => $eventStatus,
         ];
     }
 }

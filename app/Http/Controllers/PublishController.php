@@ -17,11 +17,11 @@ class PublishController extends Controller
         $event = auth()->user()->event()->with('questions')->first();
 
         if (! $event) {
-            return redirect()->route('event.edit');
+            return redirect()->back();
         }
 
         if ($event->questions->where('is_tiebreaker', false)->count() === 0) {
-            return redirect()->route('questions.index');
+            return redirect()->back();
         }
 
         return Inertia::render('admin/PublishPage', [
