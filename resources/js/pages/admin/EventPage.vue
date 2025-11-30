@@ -65,6 +65,7 @@ async function handleSubmit() {
         }
     } finally {
         saving.value = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 </script>
@@ -132,7 +133,7 @@ async function handleSubmit() {
                 </CardContent>
             </Card>
 
-            <div class="my-4 flex gap-2">
+            <div class="my-4 flex justify-end gap-2">
                 <Button type="submit" :disabled="saving">
                     {{ saving ? 'Saving...' : 'Save Event' }}
                 </Button>
