@@ -36,6 +36,7 @@ async function addAnswer() {
             <div class="group">
                 <input type="text" class="w-full border border-transparent px-2 text-xl font-bold group-hover:border-input" :value="questionText" />
             </div>
+            <slot />
             <div v-if="answers.length > 0" class="mt-2 w-sm space-y-2 pl-1">
                 <QuestionAnswer v-for="answer in answers" :key="answer.id" :answer="answer" />
                 <button v-if="answers.length < 4" type="button" class="flex cursor-pointer items-center justify-center bg-stone-100 px-1" @click="addAnswer">Add Answer</button>

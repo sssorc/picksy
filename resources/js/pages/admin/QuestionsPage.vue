@@ -1,8 +1,21 @@
 <script setup lang="ts">
 import Question from '@/components/question/Question.vue';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const questions = ref([]);
+const saving = ref(false);
+const saveError = ref('');
+const saveSuccess = ref('');
+
+function addQuestion() {
+    // TODO
+}
+
+async function saveQuestions() {
+    // TODO
+}
 </script>
 <template>
     <Head title="Questions" />
@@ -10,16 +23,20 @@ import { Head } from '@inertiajs/vue3';
     <AppLayout>
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
             <h2 class="text-2xl font-bold">Questions</h2>
-            <div>
-                <Question :index="1" />
+			
+			<AlertError v-if="saveError" :errors="[saveError]" />
+            <AlertError v-else-if="formErrors" title="Error saving event" :errors="formErrors" />
+            <AlertSuccess v-else-if="saveSuccess" :message="saveSuccess" />
+
+            <div class="space-y-4">
+                <Question v-for="question in questions" :key="question.id" :index="question.order" :question="question"> </Question>
+                <button v-if="questions.length < 16" type="button" @click="addQuestion">Add new question</button>
             </div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Questions</CardTitle>
-                    <CardDescription>Create the questinos and answers for your event.</CardDescription>
-                </CardHeader>
-                <CardContent> </CardContent>
-            </Card>
+			div.flex.justify-end
+				<Button type="submit" :disabled="saving">
+					{{ saving ? 'Saving...' : 'Save Questions' }}
+				</Button>
+			</div>
         </div>
     </AppLayout>
 </template>
