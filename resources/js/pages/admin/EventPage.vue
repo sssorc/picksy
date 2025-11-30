@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { VueDatePicker } from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
@@ -35,7 +37,7 @@ const form = useForm({
     slug: props.event?.slug || '',
     password: props.event?.password || '',
     grading_password: props.event?.grading_password || '',
-    start_datetime: props.event?.start_datetime || '',
+    start_datetime: props.event?.start_datetime ? new Date(props.event.start_datetime) : '',
 });
 
 const saving = ref(false);
@@ -47,13 +49,27 @@ const formErrors = computed(() => {
     return errors.length > 0 ? errors.flat() : null;
 });
 
+const dateFormat = {
+    month: 'LLL',
+    year: 'yyyy',
+    day: 'd',
+    input: 'LLL d, yyyy, h:mma',
+};
+
 async function handleSubmit() {
     saving.value = true;
     saveError.value = '';
     saveSuccess.value = '';
 
     try {
-        await axios.post(store().url, form.data());
+        const data = { ...form.data() };
+
+        // Convert Date object to ISO string for backend
+        if (data.start_datetime instanceof Date) {
+            data.start_datetime = data.start_datetime.toISOString();
+        }
+
+        await axios.post(store().url, data);
 
         form.clearErrors();
         saveSuccess.value = 'Event saved successfully!';
@@ -97,9 +113,9 @@ async function handleSubmit() {
                         <Textarea id="intro_text" v-model="form.intro_text" class="w-sm max-w-full" placeholder="Optional welcome message for participants" :disabled="saving" rows="3" />
                     </div>
 
-                    <div class="space-y-2">
+                    <div class="w-xs max-w-full space-y-2">
                         <Label for="start_datetime">Event Start Date & Time *</Label>
-                        <Input id="start_datetime" v-model="form.start_datetime" class="w-xs max-w-full" type="datetime-local" :disabled="saving" required />
+                        <VueDatePicker id="start_datetime" v-model="form.start_datetime" :disabled="saving" :enable-time-picker="true" :formats="dateFormat" :min-date="new Date()" placeholder="Select date and time" required />
                         <p class="text-sm text-gray-500">Participants cannot submit picks before this time</p>
                     </div>
                 </CardContent>
