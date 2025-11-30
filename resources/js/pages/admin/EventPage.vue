@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { VueDatePicker } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import axios from 'axios';
@@ -73,6 +73,9 @@ async function handleSubmit() {
 
         form.clearErrors();
         saveSuccess.value = 'Event saved successfully!';
+
+        // Reload to update shared data (including eventStatus)
+        router.reload();
     } catch (error: any) {
         if (error.response?.data?.errors) {
             form.setError(error.response.data.errors);

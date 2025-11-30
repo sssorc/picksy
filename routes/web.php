@@ -26,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Publishing
     Route::get('publish', [PublishController::class, 'index'])->name('publish.index');
     Route::post('publish', [PublishController::class, 'store'])->name('publish.store');
+    Route::post('publish/without-payment', [PublishController::class, 'publishWithoutPayment'])->name('publish.without-payment'); // TODO: Remove before production
 
     // Preview
     Route::get('preview/{slug}', [PreviewController::class, 'show'])->name('preview.show');

@@ -115,7 +115,7 @@ async function saveQuestions() {
         });
 
         saveSuccess.value = response.data.message;
-        // Reload the page data to get updated IDs
+        // Reload to get updated IDs and shared data (including eventStatus)
         router.reload({ only: ['event'] });
     } catch (error: any) {
         if (error.response?.data?.errors) {

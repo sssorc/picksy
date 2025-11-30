@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
 
@@ -78,6 +78,30 @@ class PublishController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Temporary method to publish without payment (for testing)
+     * TODO: Remove this before production
+     */
+    public function publishWithoutPayment(): RedirectResponse
+    {
+        $event = auth()->user()->event;
+
+        if (! $event) {
+            return redirect()->back()->with('error', 'Event not found.');
+        }
+
+        if ($event->is_published) {
+            return redirect()->back()->with('error', 'Event is already published.');
+        }
+
+        $event->update([
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        return redirect()->route('publish.index')->with('success', 'Event published successfully!');
     }
 
     public function webhook(Request $request): JsonResponse
