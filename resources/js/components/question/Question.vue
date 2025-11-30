@@ -2,24 +2,31 @@
 import { computed, ref, watch } from 'vue';
 import QuestionAnswer from './QuestionAnswer.vue';
 
-const props = defineProps<{
-    index: number;
-    question: {
-        id: number | null;
-        question_text: string;
-        order: number;
-        is_tiebreaker: boolean;
-        answers: Array<{
+const props = withDefaults(
+    defineProps<{
+        index: number;
+        question: {
             id: number | null;
-            answer_text: string;
+            question_text: string;
             order: number;
-        }>;
-    };
-}>();
+            is_tiebreaker: boolean;
+            answers: Array<{
+                id: number | null;
+                answer_text: string;
+                order: number;
+            }>;
+        };
+        expanded?: boolean;
+    }>(),
+    {
+        expanded: true,
+    },
+);
 
 const emit = defineEmits<{
     update: [question: typeof props.question];
     delete: [];
+    'update:expanded': [value: boolean];
 }>();
 
 const questionText = ref(props.question.question_text);
@@ -110,11 +117,22 @@ function emitUpdate() {
         answers: answers.value,
     });
 }
+
+function toggleExpanded() {
+    emit('update:expanded', !props.expanded);
+}
 </script>
 
 <template>
     <div class="flex items-start gap-4 rounded-xl border bg-card px-4 py-4 text-card-foreground shadow-sm">
-        <div class="flex shrink-0 items-center justify-center text-xl font-extrabold">{{ props.index }}.</div>
+        <div class="flex shrink-0 items-center gap-2">
+            <button v-if="!question.is_tiebreaker" type="button" class="flex size-6 items-center justify-center text-muted-foreground transition hover:text-foreground" :title="expanded ? 'Collapse' : 'Expand'" @click="toggleExpanded">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor" class="transition-transform" :class="{ 'rotate-180': !expanded }">
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
+            </button>
+            <div class="flex items-center justify-center text-xl font-extrabold">{{ props.index }}.</div>
+        </div>
         <div class="flex-1">
             <div class="group relative">
                 <input type="text" class="w-full border border-transparent px-2 text-xl font-bold group-hover:border-input" :value="questionText" placeholder="Enter question..." @input="updateQuestionText" />
@@ -127,7 +145,7 @@ function emitUpdate() {
                 </button>
             </div>
             <slot />
-            <div v-if="!question.is_tiebreaker" class="mt-2 w-sm space-y-2 pl-1">
+            <div v-if="!question.is_tiebreaker" v-show="expanded" class="mt-2 w-sm space-y-2 pl-1">
                 <QuestionAnswer
                     v-for="(answer, index) in answers"
                     :key="answer.id || `new-${index}`"

@@ -46,6 +46,9 @@ const regularQuestions = ref<Question[]>(props.event.questions.filter((q) => !q.
 
 const tiebreakerQuestion = ref<Question | null>(props.event.questions.find((q) => q.is_tiebreaker) || null);
 
+// Track expanded state for each question
+const expandedStates = ref<boolean[]>(regularQuestions.value.map(() => true));
+
 const saving = ref(false);
 const saveError = ref('');
 const saveSuccess = ref('');
@@ -70,6 +73,8 @@ function addQuestion() {
             { id: null, answer_text: '', order: 1 },
         ],
     });
+    // Add expanded state for the new question
+    expandedStates.value.push(true);
 }
 
 function updateQuestion(index: number, updatedQuestion: Question) {
@@ -78,10 +83,23 @@ function updateQuestion(index: number, updatedQuestion: Question) {
 
 function deleteQuestion(index: number) {
     regularQuestions.value.splice(index, 1);
+    expandedStates.value.splice(index, 1);
     // Reorder remaining questions
     regularQuestions.value.forEach((q, i) => {
         q.order = i;
     });
+}
+
+function collapseAll() {
+    expandedStates.value = expandedStates.value.map(() => false);
+}
+
+function expandAll() {
+    expandedStates.value = expandedStates.value.map(() => true);
+}
+
+function updateExpandedState(index: number, value: boolean) {
+    expandedStates.value[index] = value;
 }
 
 async function saveQuestions() {
@@ -124,8 +142,21 @@ async function saveQuestions() {
             <AlertError v-else-if="formErrors.length > 0" title="Error saving questions" :errors="formErrors" />
             <AlertSuccess v-else-if="saveSuccess" :message="saveSuccess" />
 
+            <div class="flex justify-end gap-2">
+                <button type="button" class="cursor-pointer text-sm text-muted-foreground transition hover:text-foreground" @click="collapseAll">Collapse all</button>
+                <button type="button" class="cursor-pointer text-sm text-muted-foreground transition hover:text-foreground" @click="expandAll">Expand all</button>
+            </div>
             <div class="space-y-4">
-                <Question v-for="(question, index) in regularQuestions" :key="question.id || `new-${index}`" :index="index + 1" :question="question" @update="updateQuestion(index, $event)" @delete="deleteQuestion(index)" />
+                <Question
+                    v-for="(question, index) in regularQuestions"
+                    :key="question.id || `new-${index}`"
+                    :index="index + 1"
+                    :question="question"
+                    :expanded="expandedStates[index]"
+                    @update="updateQuestion(index, $event)"
+                    @delete="deleteQuestion(index)"
+                    @update:expanded="updateExpandedState(index, $event)"
+                />
                 <button v-if="questionCount < 16" type="button" class="rounded-lg border-2 border-dashed border-muted-foreground/25 px-4 py-8 text-sm text-muted-foreground transition hover:border-muted-foreground/50 hover:text-foreground" @click="addQuestion">+ Add Question</button>
             </div>
 
