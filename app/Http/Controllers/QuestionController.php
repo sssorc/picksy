@@ -9,16 +9,16 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\RedirectResponse;
 
 class QuestionController extends Controller
 {
-    public function index(): Response
+    public function index(): Response|RedirectResponse
     {
         $event = auth()->user()->event()->with('questions.answers')->first();
 
         if (! $event) {
-            return redirect()->route('event.edit')
-                ->with('error', 'Please create your event details first.');
+            return redirect()->route('event.edit');
         }
 
         return Inertia::render('admin/QuestionsPage', [

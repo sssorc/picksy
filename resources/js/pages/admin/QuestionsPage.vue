@@ -142,29 +142,33 @@ async function saveQuestions() {
             <AlertError v-else-if="formErrors.length > 0" title="Error saving questions" :errors="formErrors" />
             <AlertSuccess v-else-if="saveSuccess" :message="saveSuccess" />
 
-            <div class="flex justify-end gap-2">
-                <button type="button" class="cursor-pointer text-sm text-muted-foreground transition hover:text-foreground" @click="collapseAll">Collapse all</button>
-                <button type="button" class="cursor-pointer text-sm text-muted-foreground transition hover:text-foreground" @click="expandAll">Expand all</button>
-            </div>
-            <div class="space-y-4">
-                <Question
-                    v-for="(question, index) in regularQuestions"
-                    :key="question.id || `new-${index}`"
-                    :index="index + 1"
-                    :question="question"
-                    :expanded="expandedStates[index]"
-                    @update="updateQuestion(index, $event)"
-                    @delete="deleteQuestion(index)"
-                    @update:expanded="updateExpandedState(index, $event)"
-                />
-                <button v-if="questionCount < 16" type="button" class="rounded-lg border-2 border-dashed border-muted-foreground/25 px-4 py-8 text-sm text-muted-foreground transition hover:border-muted-foreground/50 hover:text-foreground" @click="addQuestion">+ Add Question</button>
-            </div>
+            <div v-if="!event">Please save your event details first.</div>
 
-            <div class="flex justify-end">
-                <Button type="button" :disabled="saving || disableSave" @click="saveQuestions">
-                    {{ saving ? 'Saving...' : 'Save Questions' }}
-                </Button>
-            </div>
+            <template v-else>
+                <div class="flex justify-end gap-2">
+                    <button type="button" class="cursor-pointer text-sm text-muted-foreground transition hover:text-foreground" @click="collapseAll">Collapse all</button>
+                    <button type="button" class="cursor-pointer text-sm text-muted-foreground transition hover:text-foreground" @click="expandAll">Expand all</button>
+                </div>
+                <div class="space-y-4">
+                    <Question
+                        v-for="(question, index) in regularQuestions"
+                        :key="question.id || `new-${index}`"
+                        :index="index + 1"
+                        :question="question"
+                        :expanded="expandedStates[index]"
+                        @update="updateQuestion(index, $event)"
+                        @delete="deleteQuestion(index)"
+                        @update:expanded="updateExpandedState(index, $event)"
+                    />
+                    <button v-if="questionCount < 16" type="button" class="rounded-lg border-2 border-dashed border-muted-foreground/25 px-4 py-8 text-sm text-muted-foreground transition hover:border-muted-foreground/50 hover:text-foreground" @click="addQuestion">+ Add Question</button>
+                </div>
+
+                <div class="flex justify-end">
+                    <Button type="button" :disabled="saving || disableSave" @click="saveQuestions">
+                        {{ saving ? 'Saving...' : 'Save Questions' }}
+                    </Button>
+                </div>
+            </template>
         </div>
     </AppLayout>
 </template>

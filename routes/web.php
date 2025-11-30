@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\LeaderboardController;
@@ -9,16 +10,11 @@ use App\Http\Controllers\PreviewController;
 use App\Http\Controllers\PublishController;
 use App\Http\Controllers\QuestionController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use Laravel\Fortify\Features;
-
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
-})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboard
+    Route::get('/', [DashboardController::class, 'index'])->name('home');
+
     // Event Management
     Route::get('event', [EventController::class, 'edit'])->name('event.edit');
     Route::post('event', [EventController::class, 'store'])->name('event.store');

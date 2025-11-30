@@ -38,7 +38,7 @@ class PickController extends Controller
 
         // If participant has submitted picks, show their picks
         if ($participant->hasSubmittedPicks()) {
-            return Inertia::render('Public/MyPicks', [
+            return Inertia::render('public/MyPicks', [
                 'event' => [
                     'title' => $event->title,
                     'intro_text' => $event->intro_text,
@@ -71,7 +71,7 @@ class PickController extends Controller
 
         // Check if any questions have been graded (can't submit picks after grading starts)
         if ($event->hasAnyGradedQuestions()) {
-            return Inertia::render('Public/PicksClosed', [
+            return Inertia::render('public/PicksClosed', [
                 'event' => [
                     'title' => $event->title,
                     'slug' => $event->slug,
@@ -83,7 +83,7 @@ class PickController extends Controller
         $questions = $event->questions->where('is_tiebreaker', false);
         $tiebreaker = $event->questions->where('is_tiebreaker', true)->first();
 
-        return Inertia::render('Public/SubmitPicks', [
+        return Inertia::render('public/SubmitPicks', [
             'event' => [
                 'title' => $event->title,
                 'intro_text' => $event->intro_text,

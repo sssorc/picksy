@@ -17,13 +17,11 @@ class PublishController extends Controller
         $event = auth()->user()->event()->with('questions')->first();
 
         if (! $event) {
-            return redirect()->route('event.edit')
-                ->with('error', 'Please create your event details first.');
+            return redirect()->route('event.edit');
         }
 
         if ($event->questions->where('is_tiebreaker', false)->count() === 0) {
-            return redirect()->route('questions.index')
-                ->with('error', 'Please add at least one question before publishing.');
+            return redirect()->route('questions.index');
         }
 
         return Inertia::render('admin/PublishPage', [

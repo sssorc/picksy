@@ -25,7 +25,7 @@ class GradeController extends Controller
         $isGradingAuthenticated = session()->get("event_{$event->id}_grading_auth", false);
 
         if (! $isGradingAuthenticated) {
-            return Inertia::render('Public/GradingPassword', [
+            return Inertia::render('grade/GradePassword', [
                 'event' => [
                     'title' => $event->title,
                     'slug' => $event->slug,
@@ -68,7 +68,7 @@ class GradeController extends Controller
 
         $questions = $event->questions->where('is_tiebreaker', false);
 
-        return Inertia::render('Public/Grade', [
+        return Inertia::render('grade/Grade', [
             'event' => [
                 'title' => $event->title,
                 'slug' => $event->slug,
