@@ -3,12 +3,15 @@ import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { edit as event } from '@/routes/event';
+import { index as help } from '@/routes/help';
 import { index as publish } from '@/routes/publish';
 import { index as questions } from '@/routes/questions';
 import { type EventStatus, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
+import { HelpCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
+import NavFooter from './NavFooter.vue';
 
 const page = usePage();
 
@@ -55,6 +58,14 @@ const mainNavItems = computed((): NavItem[] => {
         { title: 'Publish', href: publish(), status: publishItemStatus },
     ];
 });
+
+const footerNavItems: NavItem[] = [
+    {
+        title: 'Help',
+        href: help(),
+        icon: HelpCircle,
+    },
+];
 </script>
 
 <template>
@@ -76,6 +87,7 @@ const mainNavItems = computed((): NavItem[] => {
         </SidebarContent>
 
         <SidebarFooter>
+            <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

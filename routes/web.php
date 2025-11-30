@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\HelpController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ParticipantEventController;
 use App\Http\Controllers\PickController;
@@ -32,6 +33,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('preview/{slug}', [PreviewController::class, 'show'])->name('preview.show');
     Route::get('preview/{slug}/picks', [PreviewController::class, 'picks'])->name('preview.picks');
     Route::get('preview/{slug}/leaderboard', [PreviewController::class, 'leaderboard'])->name('preview.leaderboard');
+
+    // Help
+    Route::get('help', [HelpController::class, 'index'])->name('help.index');
 });
 
 // Stripe Webhook (no auth/CSRF needed)
