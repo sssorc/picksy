@@ -27,6 +27,7 @@ class PublishController extends Controller
         return Inertia::render('admin/PublishPage', [
             'event' => $event,
             'isPublished' => $event->is_published,
+            'appUrl' => config('app.url'),
         ]);
     }
 

@@ -15,6 +15,7 @@ defineProps<{
         grading_password: string;
         slug: string;
     };
+    appUrl: string;
 }>();
 
 const form = useForm({});
@@ -31,7 +32,7 @@ function handleSubmit() {
             <h2 class="mt-3 mb-6 text-2xl font-bold">Publish</h2>
             <div v-if="event.is_published">
                 <div class="rounded-lg bg-green-50 p-4 ring ring-green-900">
-                    Your event is published at <a :href="`https://16q.com/${event.slug}`" target="_blank" class="underline">16q.com/{{ event.slug }}</a>
+                    Your event is published at <a :href="`${appUrl}/${event.slug}`" target="_blank" class="underline">{{ appUrl.replace(/^https?:\/\//, '') }}/{{ event.slug }}</a>
                 </div>
                 <ul class="mt-6 list-inside list-disc space-y-2 pl-3">
                     <li v-if="event.password">
@@ -41,7 +42,7 @@ function handleSubmit() {
                         Submissions accepted starting at <span class="font-bold">{{ event.start_datetime }}</span>
                     </li>
                     <li>
-                        Grade questions at <a :href="`https://16q.com/${event.slug}/grade`" target="_blank" class="underline">16q.com/{{ event.slug }}/grade</a> with password <span class="font-bold">{{ event.grading_password }}</span>
+                        Grade questions at <a :href="`${appUrl}/${event.slug}/grade`" target="_blank" class="underline">{{ appUrl.replace(/^https?:\/\//, '') }}/{{ event.slug }}/grade</a> with password <span class="font-bold">{{ event.grading_password }}</span>
                     </li>
                 </ul>
             </div>

@@ -7,7 +7,7 @@ import { index as help } from '@/routes/help';
 import { index as publish } from '@/routes/publish';
 import { index as questions } from '@/routes/questions';
 import { type EventStatus, type NavItem } from '@/types';
-import { Link, usePage } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import { HelpCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
@@ -74,9 +74,9 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="event()">
+                        <a href="/">
                             <AppLogo />
-                        </Link>
+                        </a>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>

@@ -25,7 +25,7 @@ class PickController extends Controller
         // Get participant from cookie
         $participantId = request()->cookie("event_{$event->id}_participant");
         if (! $participantId) {
-            return redirect()->route('event.show', $slug);
+            return redirect()->route('event.login', $slug);
         }
 
         $participant = Participant::query()
@@ -33,69 +33,25 @@ class PickController extends Controller
             ->findOrFail($participantId);
 
         if ($participant->event_id !== $event->id) {
-            return redirect()->route('event.show', $slug);
+            return redirect()->route('event.login', $slug);
         }
 
-        // If participant has submitted picks, show their picks
-        if ($participant->hasSubmittedPicks()) {
-            return Inertia::render('public/MyPicks', [
-                'event' => [
-                    'title' => $event->title,
-                    'intro_text' => $event->intro_text,
-                ],
-                'participant' => [
-                    'first_name' => $participant->first_name,
-                    'last_name' => $participant->last_name,
-                ],
-                'picks' => $participant->picks->map(function ($pick) {
-                    return [
-                        'question_id' => $pick->question_id,
-                        'question_text' => $pick->question->question_text,
-                        'is_tiebreaker' => $pick->question->is_tiebreaker,
-                        'selected_answer_id' => $pick->answer_id,
-                        'tiebreaker_answer' => $pick->tiebreaker_answer,
-                        'is_graded' => $pick->question->isGraded(),
-                        'is_correct' => $pick->isCorrect(),
-                        'correct_answer_id' => $pick->question->correctAnswer()?->id,
-                        'answers' => $pick->question->answers->map(function ($answer) {
-                            return [
-                                'id' => $answer->id,
-                                'answer_text' => $answer->answer_text,
-                                'is_correct' => $answer->is_correct,
-                            ];
-                        }),
-                    ];
-                }),
-            ]);
-        }
-
-        // Check if any questions have been graded (can't submit picks after grading starts)
-        if ($event->hasAnyGradedQuestions()) {
-            return Inertia::render('public/PicksClosed', [
-                'event' => [
-                    'title' => $event->title,
-                    'slug' => $event->slug,
-                ],
-            ]);
-        }
-
-        // Show picks submission form
-        $questions = $event->questions->where('is_tiebreaker', false);
-        $tiebreaker = $event->questions->where('is_tiebreaker', true)->first();
-
-        return Inertia::render('public/SubmitPicks', [
+        $responseData = [
             'event' => [
+                'slug' => $event->slug,
                 'title' => $event->title,
                 'intro_text' => $event->intro_text,
+                'picks_closed' => $event->hasAnyGradedQuestions(),
             ],
             'participant' => [
                 'first_name' => $participant->first_name,
                 'last_name' => $participant->last_name,
             ],
-            'questions' => $questions->values()->map(function ($question) {
+            'questions' => $event->questions->map(function ($question) {
                 return [
                     'id' => $question->id,
                     'question_text' => $question->question_text,
+                    'is_tiebreaker' => $question->is_tiebreaker,
                     'answers' => $question->answers->map(function ($answer) {
                         return [
                             'id' => $answer->id,
@@ -104,11 +60,32 @@ class PickController extends Controller
                     }),
                 ];
             }),
-            'tiebreaker' => $tiebreaker ? [
-                'id' => $tiebreaker->id,
-                'question_text' => $tiebreaker->question_text,
-            ] : null,
-        ]);
+            'picks' => null,
+        ];
+
+        if ($participant->hasSubmittedPicks()) {
+            $responseData['picks'] = $participant->picks->map(function ($pick) {
+                return [
+                    'question_id' => $pick->question_id,
+                    'question_text' => $pick->question->question_text,
+                    'is_tiebreaker' => $pick->question->is_tiebreaker,
+                    'selected_answer_id' => $pick->answer_id,
+                    'tiebreaker_answer' => $pick->tiebreaker_answer,
+                    'is_graded' => $pick->question->isGraded(),
+                    'is_correct' => $pick->isCorrect(),
+                    'correct_answer_id' => $pick->question->correctAnswer()?->id,
+                    'answers' => $pick->question->answers->map(function ($answer) {
+                        return [
+                            'id' => $answer->id,
+                            'answer_text' => $answer->answer_text,
+                            'is_correct' => $answer->is_correct,
+                        ];
+                    }),
+                ];
+            });
+        }
+
+        return Inertia::render('public/EventPicks', $responseData);
     }
 
     public function store(StorePicksRequest $request, string $slug): JsonResponse

@@ -43,9 +43,9 @@ Route::post('stripe/webhook', [PublishController::class, 'webhook'])->withoutMid
 
 // Public Event Routes (protected by event password)
 Route::prefix('{slug}')->middleware('event.password')->group(function () {
-    // Event Entry
-    Route::get('/', [ParticipantEventController::class, 'show'])->name('event.show');
-    Route::post('/password', [ParticipantEventController::class, 'authenticatePassword'])->name('event.password');
+    
+	// Enter name + password
+    Route::get('/', [ParticipantEventController::class, 'show'])->name('event.login');
     Route::post('/name', [ParticipantEventController::class, 'storeName'])->name('participant.store');
     Route::post('/confirm-identity', [ParticipantEventController::class, 'confirmIdentity'])->name('participant.confirm');
 

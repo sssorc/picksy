@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use App\Models\Event;
 use Closure;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureEventPasswordAuthenticated
@@ -33,17 +32,15 @@ class EnsureEventPasswordAuthenticated
             $isAuthenticated = $request->session()->get("event_{$event->id}_password_auth", false);
 
             if (! $isAuthenticated) {
-                // Exclude the password authentication route itself
-                if ($request->routeIs('event.password')) {
+                // Exclude the entry routes (show, store name, and confirm identity)
+                if ($request->routeIs('event.login') || 
+                    $request->routeIs('participant.store') || 
+                    $request->routeIs('participant.confirm')) {
                     return $next($request);
                 }
 
-                return Inertia::render('Public/EventPassword', [
-                    'event' => [
-                        'title' => $event->title,
-                        'slug' => $event->slug,
-                    ],
-                ])->toResponse($request);
+                // Redirect to entry page if not authenticated
+                return redirect()->route('event.login', $slug);
             }
         }
 

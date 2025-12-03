@@ -1,2 +1,2 @@
 <script setup lang="ts"></script>
-<template>grade page</template>
+<template>leaderboard</template>

@@ -7,7 +7,6 @@ use App\Models\Event;
 use App\Models\Participant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,7 +22,7 @@ class ParticipantEventController extends Controller
 
         // Check if event has started
         if (! $event->hasStarted()) {
-            return Inertia::render('Public/EventNotStarted', [
+            return Inertia::render('public/EventNotStarted', [
                 'event' => $event,
             ]);
         }
@@ -37,37 +36,16 @@ class ParticipantEventController extends Controller
             }
         }
 
-        // Show name entry form (password check handled by middleware)
-        return Inertia::render('Public/EventEntry', [
+        // Show name entry form
+        return Inertia::render('public/EventLogin', [
             'event' => [
                 'id' => $event->id,
                 'title' => $event->title,
                 'intro_text' => $event->intro_text,
                 'slug' => $event->slug,
+                'has_password' => ! empty($event->password),
             ],
         ]);
-    }
-
-    public function authenticatePassword(Request $request, string $slug): RedirectResponse
-    {
-        $event = Event::query()
-            ->where('slug', $slug)
-            ->where('is_published', true)
-            ->firstOrFail();
-
-        $request->validate([
-            'password' => ['required', 'string'],
-        ]);
-
-        if ($request->password !== $event->password) {
-            return back()->withErrors([
-                'password' => 'Incorrect password.',
-            ]);
-        }
-
-        session()->put("event_{$event->id}_password_auth", true);
-
-        return redirect()->route('event.show', $slug);
     }
 
     public function storeName(StoreParticipantRequest $request, string $slug): JsonResponse
@@ -76,6 +54,20 @@ class ParticipantEventController extends Controller
             ->where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
+
+        // Validate event password if required
+        if ($event->password) {
+            if (! $request->has('password') || $request->password !== $event->password) {
+                return response()->json([
+                    'errors' => [
+                        'password' => 'Incorrect password.',
+                    ],
+                ], 422);
+            }
+
+            // Set password authentication in session
+            session()->put("event_{$event->id}_password_auth", true);
+        }
 
         // Check for existing participant
         $existingParticipant = Participant::query()
@@ -110,7 +102,7 @@ class ParticipantEventController extends Controller
             60 * 24 * 60, // 60 days in minutes
             '/',
             null,
-            true,
+            config('session.secure', false), // Use session.secure config
             true,
             false,
             'lax'
@@ -134,6 +126,11 @@ class ParticipantEventController extends Controller
 
         if ($participant->event_id !== $event->id) {
             return response()->json(['message' => 'Invalid participant.'], 403);
+        }
+
+        // Ensure password auth session is set (in case they're confirming a returning identity)
+        if ($event->password) {
+            session()->put("event_{$event->id}_password_auth", true);
         }
 
         // Set cookie for 60 days
