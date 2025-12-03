@@ -117,6 +117,11 @@ class PickController extends Controller
             return response()->json(['message' => 'Picks can no longer be submitted as grading has started.'], 400);
         }
 
+        // Check if maximum entries has been reached
+        if ($event->hasReachedMaxEntries()) {
+            return response()->json(['message' => 'This event has reached its maximum number of entries.'], 400);
+        }
+
         DB::transaction(function () use ($request, $participant) {
             // Create picks
             foreach ($request->picks as $pickData) {

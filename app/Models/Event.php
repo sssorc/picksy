@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Event extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'title',
@@ -22,6 +23,7 @@ class Event extends Model
         'published_at',
         'payment_intent_id',
         'amount_paid',
+        'max_entries',
     ];
 
     protected function casts(): array
@@ -66,5 +68,21 @@ class Event extends Model
     public function hasAnyGradedQuestions(): bool
     {
         return $this->questions()->whereNotNull('graded_at')->exists();
+    }
+
+    public function hasReachedMaxEntries(): bool
+    {
+        if ($this->max_entries === 0) {
+            return false; // Unlimited entries
+        }
+
+        $submittedCount = $this->participants()->whereNotNull('submitted_at')->count();
+
+        return $submittedCount >= $this->max_entries;
+    }
+
+    public function getSubmittedEntriesCount(): int
+    {
+        return $this->participants()->whereNotNull('submitted_at')->count();
     }
 }

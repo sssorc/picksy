@@ -31,7 +31,7 @@ class PublishController extends Controller
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse|RedirectResponse
     {
         $event = auth()->user()->event;
 
@@ -43,11 +43,33 @@ class PublishController extends Controller
             return response()->json(['message' => 'Event is already published.'], 400);
         }
 
-        // Initialize Stripe
+        $validated = $request->validate([
+            'max_entries' => 'required|integer|in:10,60,0',
+        ]);
+
+        $maxEntries = (int) $validated['max_entries'];
+
+        // Free tier - publish immediately
+        if ($maxEntries === 10) {
+            $event->update([
+                'is_published' => true,
+                'published_at' => now(),
+                'max_entries' => $maxEntries,
+            ]);
+
+            return redirect()->route('publish.index')->with('success', 'Event published successfully!');
+        }
+
+        // Paid tiers - redirect to Stripe checkout
         Stripe::setApiKey(config('services.stripe.secret'));
 
+        $amount = match ($maxEntries) {
+            60 => 1500, // $15.00 in cents
+            0 => 10000, // $100.00 in cents
+            default => throw new \Exception('Invalid tier amount'),
+        };
+
         try {
-            // Create Stripe Checkout Session
             $checkoutSession = StripeSession::create([
                 'payment_method_types' => ['card'],
                 'line_items' => [[
@@ -57,7 +79,7 @@ class PublishController extends Controller
                             'name' => 'Event Publishing Fee',
                             'description' => "Publish event: {$event->title}",
                         ],
-                        'unit_amount' => 2500, // $25.00 in cents
+                        'unit_amount' => $amount,
                     ],
                     'quantity' => 1,
                 ]],
@@ -67,6 +89,7 @@ class PublishController extends Controller
                 'metadata' => [
                     'event_id' => $event->id,
                     'user_id' => auth()->id(),
+                    'max_entries' => $maxEntries,
                 ],
             ]);
 
@@ -79,30 +102,6 @@ class PublishController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-    }
-
-    /**
-     * Temporary method to publish without payment (for testing)
-     * TODO: Remove this before production
-     */
-    public function publishWithoutPayment(): RedirectResponse
-    {
-        $event = auth()->user()->event;
-
-        if (! $event) {
-            return redirect()->back()->with('error', 'Event not found.');
-        }
-
-        if ($event->is_published) {
-            return redirect()->back()->with('error', 'Event is already published.');
-        }
-
-        $event->update([
-            'is_published' => true,
-            'published_at' => now(),
-        ]);
-
-        return redirect()->route('publish.index')->with('success', 'Event published successfully!');
     }
 
     public function webhook(Request $request): JsonResponse
@@ -138,6 +137,7 @@ class PublishController extends Controller
                     'published_at' => now(),
                     'payment_intent_id' => $session->payment_intent,
                     'amount_paid' => $session->amount_total,
+                    'max_entries' => $session->metadata->max_entries ?? 60,
                 ]);
             }
         }

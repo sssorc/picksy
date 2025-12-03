@@ -27,7 +27,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Publishing
     Route::get('publish', [PublishController::class, 'index'])->name('publish.index');
     Route::post('publish', [PublishController::class, 'store'])->name('publish.store');
-    Route::post('publish/without-payment', [PublishController::class, 'publishWithoutPayment'])->name('publish.without-payment'); // TODO: Remove before production
 
     // Preview
     Route::get('preview/{slug}', [PreviewController::class, 'show'])->name('preview.show');
@@ -43,8 +42,8 @@ Route::post('stripe/webhook', [PublishController::class, 'webhook'])->withoutMid
 
 // Public Event Routes (protected by event password)
 Route::prefix('{slug}')->middleware('event.password')->group(function () {
-    
-	// Enter name + password
+
+    // Enter name + password
     Route::get('/', [ParticipantEventController::class, 'show'])->name('event.login');
     Route::post('/name', [ParticipantEventController::class, 'storeName'])->name('participant.store');
     Route::post('/confirm-identity', [ParticipantEventController::class, 'confirmIdentity'])->name('participant.confirm');
