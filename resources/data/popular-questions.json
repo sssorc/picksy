@@ -1,83 +1,42 @@
 [
-  {
-    "question_text": "How long will the best man's speech be?",
-    "answers": [
-      "Under 2 minutes",
-      "2-4 minutes",
-      "4-6 minutes",
-      "6-8 minutes",
-      "Over 8 minutes"
-    ]
-  },
-  {
-    "question_text": "What song will be played for the first dance?",
-    "answers": []
-  },
-  {
-    "question_text": "How many guests will attend?",
-    "answers": [
-      "Under 50",
-      "50-100",
-      "100-150",
-      "150-200",
-      "Over 200"
-    ]
-  },
-  {
-    "question_text": "What time will the ceremony start?",
-    "answers": []
-  },
-  {
-    "question_text": "Will anyone cry during the vows?",
-    "answers": [
-      "Bride only",
-      "Groom only",
-      "Both",
-      "Neither",
-      "Someone in the audience"
-    ]
-  },
-  {
-    "question_text": "How many tiers will the wedding cake have?",
-    "answers": [
-      "1 tier",
-      "2 tiers",
-      "3 tiers",
-      "4 tiers",
-      "5+ tiers"
-    ]
-  },
-  {
-    "question_text": "What color will the bridesmaids' dresses be?",
-    "answers": []
-  },
-  {
-    "question_text": "Will the bouquet be caught?",
-    "answers": [
-      "Yes, on first throw",
-      "Yes, after multiple throws",
-      "No, it will hit the floor",
-      "No bouquet toss"
-    ]
-  },
-  {
-    "question_text": "How many people will give speeches?",
-    "answers": [
-      "1 person",
-      "2 people",
-      "3 people",
-      "4 people",
-      "5+ people"
-    ]
-  },
-  {
-    "question_text": "Will there be a signature cocktail?",
-    "answers": [
-      "Yes, one",
-      "Yes, two",
-      "Yes, three or more",
-      "No"
-    ]
-  }
+    {
+        "question_text": "How long will the best man's speech be?",
+        "answers": ["Under 2 minutes", "2-4 minutes", "4-6 minutes", "6-8 minutes", "Over 8 minutes"]
+    },
+    {
+        "question_text": "What song will be played for the first dance?",
+        "answers": []
+    },
+    {
+        "question_text": "How many guests will attend?",
+        "answers": ["Under 50", "50-100", "100-150", "150-200", "Over 200"]
+    },
+    {
+        "question_text": "What time will the ceremony start?",
+        "answers": []
+    },
+    {
+        "question_text": "Will anyone cry during the vows?",
+        "answers": ["Bride only", "Groom only", "Both", "Neither", "Someone in the audience"]
+    },
+    {
+        "question_text": "How many tiers will the wedding cake have?",
+        "answers": ["1 tier", "2 tiers", "3 tiers", "4 tiers", "5+ tiers"]
+    },
+    {
+        "question_text": "What color will the bridesmaids' dresses be?",
+        "answers": []
+    },
+    {
+        "question_text": "Will the bouquet be caught?",
+        "answers": ["Yes, on first throw", "Yes, after multiple throws", "No, it will hit the floor", "No bouquet toss"]
+    },
+    {
+        "question_text": "How many people will give speeches?",
+        "answers": ["1 person", "2 people", "3 people", "4 people", "5+ people"]
+    },
+    {
+        "question_text": "Will there be a signature cocktail?",
+        "answers": ["Yes, one", "Yes, two", "Yes, three or more", "No"]
+    }
 ]
-

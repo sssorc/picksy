@@ -57,7 +57,9 @@ const formErrors = ref<string[]>([]);
 const questionCount = computed(() => regularQuestions.value.length);
 
 const disableSave = computed(() => {
-    return regularQuestions.value.some((q) => q.question_text.trim() === '' || q.answers.some((a) => a.answer_text.trim() === ''));
+    const hasInvalidRegularQuestions = regularQuestions.value.some((q) => q.question_text.trim() === '' || q.answers.some((a) => a.answer_text.trim() === ''));
+    const hasInvalidTiebreaker = tiebreakerQuestion.value && tiebreakerQuestion.value.question_text.trim() === '';
+    return hasInvalidRegularQuestions || hasInvalidTiebreaker;
 });
 
 function addQuestion() {
@@ -75,6 +77,26 @@ function addQuestion() {
     });
     // Add expanded state for the new question
     expandedStates.value.push(true);
+}
+
+function addTiebreaker() {
+    if (tiebreakerQuestion.value) return;
+
+    tiebreakerQuestion.value = {
+        id: null,
+        question_text: '',
+        order: 0,
+        is_tiebreaker: true,
+        answers: [],
+    };
+}
+
+function updateTiebreaker(updatedQuestion: Question) {
+    tiebreakerQuestion.value = { ...updatedQuestion };
+}
+
+function deleteTiebreaker() {
+    tiebreakerQuestion.value = null;
 }
 
 function updateQuestion(index: number, updatedQuestion: Question) {
@@ -160,7 +182,13 @@ async function saveQuestions() {
                         @delete="deleteQuestion(index)"
                         @update:expanded="updateExpandedState(index, $event)"
                     />
-                    <button v-if="questionCount < 16" type="button" class="rounded-lg border-2 border-dashed border-muted-foreground/25 px-4 py-8 text-sm text-muted-foreground transition hover:border-muted-foreground/50 hover:text-foreground" @click="addQuestion">+ Add Question</button>
+
+                    <Question v-if="tiebreakerQuestion" :key="tiebreakerQuestion.id || 'tiebreaker'" index="TB" :question="tiebreakerQuestion" @update="updateTiebreaker($event)" @delete="deleteTiebreaker"> </Question>
+
+                    <div class="flex flex-col gap-2">
+                        <button v-if="questionCount < 16" type="button" class="rounded-lg border-2 border-dashed border-muted-foreground/25 px-4 py-8 text-sm text-muted-foreground transition hover:border-muted-foreground/50 hover:text-foreground" @click="addQuestion">+ Add Question</button>
+                        <button v-if="!tiebreakerQuestion" type="button" class="rounded-lg border-2 border-dashed border-muted-foreground/25 px-4 py-8 text-sm text-muted-foreground transition hover:border-muted-foreground/50 hover:text-foreground" @click="addTiebreaker">+ Add Tiebreaker</button>
+                    </div>
                 </div>
 
                 <div class="flex justify-end">

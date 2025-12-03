@@ -15,6 +15,7 @@ class EventController extends Controller
 
         return Inertia::render('admin/EventPage', [
             'event' => $event,
+            'appUrl' => config('app.url'),
         ]);
     }
 

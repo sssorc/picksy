@@ -45,6 +45,7 @@ function handleSubmit() {
                         Grade questions at <a :href="`${appUrl}/${event.slug}/grade`" target="_blank" class="underline">{{ appUrl.replace(/^https?:\/\//, '') }}/{{ event.slug }}/grade</a> with password <span class="font-bold">{{ event.grading_password }}</span>
                     </li>
                 </ul>
+                <p class="mt-12">All event data will be deleted 60 days after the event.</p>
             </div>
             <Card v-else>
                 <CardHeader>

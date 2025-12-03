@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PicksQuestion from '@/components/picks/PicksQuestion.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 import { store } from '@/routes/picks';
 import { router } from '@inertiajs/vue3';
 import axios from 'axios';
@@ -43,9 +44,14 @@ interface Props {
     };
     questions: Question[];
     picks: Pick[] | null;
+    isPreview?: boolean;
 }
 
 const props = defineProps<Props>();
+
+defineOptions({
+    layout: PublicLayout,
+});
 
 const hasSubmittedPicks = computed(() => props.picks !== null);
 
@@ -122,7 +128,42 @@ async function submitPicks() {
             <p class="mt-2 text-sm text-gray-500">Welcome, {{ participant.first_name }} {{ participant.last_name }}</p>
         </div>
 
-        <template v-if="event.picks_closed || hasSubmittedPicks">
+        <template v-if="isPreview">
+            <div class="space-y-6">
+                <div class="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                    <p class="text-sm text-blue-800"><strong>Preview Mode:</strong> This is how participants will see the picks page. Submissions are disabled in preview mode.</p>
+                </div>
+
+                <h2 class="text-xl font-semibold">Make Your Picks</h2>
+
+                <!-- Preview the questions without functionality -->
+                <div class="space-y-6">
+                    <div v-for="(question, index) in regularQuestions" :key="question.id" class="rounded-lg border p-6">
+                        <h3 class="mb-4 font-medium">{{ index + 1 }}. {{ question.question_text }}</h3>
+                        <div class="space-y-2">
+                            <label v-for="answer in question.answers" :key="answer.id" class="flex cursor-not-allowed items-center rounded-lg border border-gray-300 p-3 opacity-60">
+                                <input type="radio" disabled :name="`preview_question_${question.id}`" class="mr-3" />
+                                <span>{{ answer.answer_text }}</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Tiebreaker question preview -->
+                    <div v-if="tiebreakerQuestion" class="rounded-lg border border-amber-200 bg-amber-50 p-6">
+                        <h3 class="mb-4 font-medium">Tiebreaker: {{ tiebreakerQuestion.question_text }}</h3>
+                        <input type="text" disabled class="w-full rounded-lg border bg-white p-3 opacity-60" placeholder="Enter your answer" />
+                    </div>
+
+                    <!-- Preview submit button -->
+                    <div class="items-center space-y-2 text-center">
+                        <p class="text-sm text-gray-600">All picks are final once submitted.</p>
+                        <button type="button" disabled class="w-full cursor-not-allowed rounded-lg bg-blue-600 px-6 py-3 font-medium text-white opacity-60">Lock in Picks</button>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template v-else-if="event.picks_closed || hasSubmittedPicks">
             <div class="space-y-6">
                 <h2 class="text-xl font-semibold">Your Picks</h2>
 
@@ -165,7 +206,7 @@ async function submitPicks() {
                     <!-- Submit button -->
                     <div class="items-center space-y-2 text-center">
                         <p class="text-sm text-gray-600">All picks are final once submitted..</p>
-                        <button type="submit" :disabled="processing || unansweredQuestions.length" class="w-full rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+                        <button type="submit" :disabled="processing || unansweredQuestions.length > 0" class="w-full rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
                             {{ unansweredQuestions.length > 0 ? 'Answer all questions to submit' : 'Lock in Picks' }}
                         </button>
                     </div>

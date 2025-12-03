@@ -29,10 +29,32 @@ class PreviewController extends Controller
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
-        return Inertia::render('Preview/Picks', [
-            'event' => $event,
-            'questions' => $event->questions->where('is_tiebreaker', false),
-            'tiebreaker' => $event->questions->where('is_tiebreaker', true)->first(),
+        return Inertia::render('public/EventPicks', [
+            'event' => [
+                'slug' => $event->slug,
+                'title' => $event->title,
+                'intro_text' => $event->intro_text,
+                'picks_closed' => true, // Preview mode - no submissions allowed
+            ],
+            'participant' => [
+                'first_name' => 'Preview',
+                'last_name' => 'User',
+            ],
+            'questions' => $event->questions->map(function ($question) {
+                return [
+                    'id' => $question->id,
+                    'question_text' => $question->question_text,
+                    'is_tiebreaker' => $question->is_tiebreaker,
+                    'answers' => $question->answers->map(function ($answer) {
+                        return [
+                            'id' => $answer->id,
+                            'answer_text' => $answer->answer_text,
+                        ];
+                    }),
+                ];
+            }),
+            'picks' => [], // Empty picks for preview
+            'isPreview' => true,
         ]);
     }
 
@@ -43,11 +65,16 @@ class PreviewController extends Controller
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
+        // Get tiebreaker question (if exists)
+        $tiebreakerQuestion = $event->questions()
+            ->where('is_tiebreaker', true)
+            ->first();
+
         // Generate mock leaderboard data for preview
         $mockParticipants = [
-            ['name' => 'John Doe', 'score' => 0],
-            ['name' => 'Jane Smith', 'score' => 0],
-            ['name' => 'Bob Johnson', 'score' => 0],
+            ['name' => 'John Doe', 'score' => 0, 'tiebreaker_answer' => null],
+            ['name' => 'Jane Smith', 'score' => 0, 'tiebreaker_answer' => null],
+            ['name' => 'Bob Johnson', 'score' => 0, 'tiebreaker_answer' => null],
         ];
 
         $gradedCount = $event->questions()
@@ -59,11 +86,18 @@ class PreviewController extends Controller
             ->where('is_tiebreaker', false)
             ->count();
 
-        return Inertia::render('Preview/Leaderboard', [
-            'event' => $event,
+        return Inertia::render('public/EventLeaderboard', [
+            'event' => [
+                'title' => $event->title,
+                'slug' => $event->slug,
+            ],
             'participants' => $mockParticipants,
             'gradedCount' => $gradedCount,
             'totalCount' => $totalCount,
+            'tiebreaker_question' => $tiebreakerQuestion ? [
+                'id' => $tiebreakerQuestion->id,
+                'question_text' => $tiebreakerQuestion->question_text,
+            ] : null,
         ]);
     }
 }

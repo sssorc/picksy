@@ -27,6 +27,7 @@ interface Event {
 
 interface Props {
     event?: Event | null;
+    appUrl: string;
 }
 
 const props = defineProps<Props>();
@@ -112,14 +113,15 @@ async function handleSubmit() {
                     </div>
 
                     <div class="space-y-2">
-                        <Label for="intro_text">Intro Text</Label>
+                        <Label for="intro_text">Intro Text (Optional)</Label>
+                        <p class="text-sm text-gray-500">This will display above the questions when users make their picks.</p>
                         <Textarea id="intro_text" v-model="form.intro_text" class="w-sm max-w-full" placeholder="Optional welcome message for participants" :disabled="saving" rows="3" />
                     </div>
 
                     <div class="w-xs max-w-full space-y-2">
                         <Label for="start_datetime">Event Start Date & Time *</Label>
+                        <p class="text-sm text-gray-500">Users cannot submit picks before this time.</p>
                         <VueDatePicker id="start_datetime" v-model="form.start_datetime" :disabled="saving" :enable-time-picker="true" :formats="dateFormat" :min-date="new Date()" placeholder="Select date and time" required />
-                        <p class="text-sm text-gray-500">Participants cannot submit picks before this time</p>
                     </div>
                 </CardContent>
             </Card>
@@ -129,25 +131,27 @@ async function handleSubmit() {
                     <CardTitle>Technical Details</CardTitle>
                     <CardDescription> Set up your event information. This will be visible to participants. </CardDescription>
                 </CardHeader>
-                <CardContent class="space-y-6">
+                <CardContent class="space-y-8">
                     <div class="space-y-2">
-                        <Label for="slug">Event Path *</Label>
-                        <Input id="slug" v-model="form.slug" type="text" class="w-xs max-w-full" placeholder="e.g., john-jane-wedding" :disabled="saving || event?.slug" required />
-                        <p class="text-sm text-gray-500">
-                            {{ event?.slug ? 'Path cannot be changed after creation' : 'Use lowercase letters, numbers, and hyphens only' }}
-                        </p>
+                        <Label for="slug">Event URL *</Label>
+                        <p class="text-sm text-gray-500">'Use lowercase letters, numbers, and hyphens only.</p>
+                        <div class="flex items-center">
+                            <span class="text-gray-500">{{ appUrl.replace(/^https?:\/\//, '') }}/</span>
+                            <Input id="slug" v-model="form.slug" type="text" class="w-xs max-w-full" placeholder="e.g., john-jane-wedding" :disabled="saving || event?.is_published" required />
+                        </div>
+                        <small>Cannot be changed after publishing.</small>
                     </div>
 
                     <div class="space-y-2">
                         <Label for="password">Event Password (Optional)</Label>
-                        <Input id="password" v-model="form.password" class="w-xs max-w-full" type="text" placeholder="Leave blank for no password" :disabled="saving" />
                         <p class="text-sm text-gray-500">Participants will need this password to access your event</p>
+                        <Input id="password" v-model="form.password" class="w-xs max-w-full" type="text" placeholder="Leave blank for no password" :disabled="saving" />
                     </div>
 
                     <div class="space-y-2">
                         <Label for="grading_password">Grading Password *</Label>
+                        <p class="text-sm text-gray-500">This password is required to grade questions during the event.</p>
                         <Input id="grading_password" v-model="form.grading_password" class="w-xs max-w-full" type="text" placeholder="Required for grading questions" :disabled="saving" required />
-                        <p class="text-sm text-gray-500">This password is required to grade questions during the event</p>
                     </div>
                 </CardContent>
             </Card>

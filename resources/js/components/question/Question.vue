@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { PhTrash } from '@phosphor-icons/vue';
 import { computed, ref, watch } from 'vue';
 import QuestionAnswer from './QuestionAnswer.vue';
 
 const props = withDefaults(
     defineProps<{
-        index: number;
+        index: number | string;
         question: {
             id: number | null;
             question_text: string;
@@ -124,7 +125,11 @@ function toggleExpanded() {
 </script>
 
 <template>
-    <div class="flex items-start gap-4 rounded-xl border bg-card px-4 py-4 text-card-foreground shadow-sm">
+    <div class="group relative flex items-start gap-4 rounded-xl border bg-card px-4 py-4 text-card-foreground shadow-sm">
+        <button type="button" @click="deleteQuestion" aria-label="Delete question" class="absolute top-4 right-4 opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:text-destructive">
+            <PhTrash />
+        </button>
+
         <div class="flex shrink-0 items-center gap-2">
             <button v-if="!question.is_tiebreaker" type="button" class="flex size-6 items-center justify-center text-muted-foreground transition hover:text-foreground" :title="expanded ? 'Collapse' : 'Expand'" @click="toggleExpanded">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor" class="transition-transform" :class="{ 'rotate-180': !expanded }">
@@ -133,18 +138,10 @@ function toggleExpanded() {
             </button>
             <div class="flex items-center justify-center text-xl font-extrabold">{{ props.index }}.</div>
         </div>
-        <div class="flex-1">
-            <div class="group relative">
-                <input type="text" class="w-full border border-transparent px-2 text-xl font-bold group-hover:border-input" :value="questionText" placeholder="Enter question..." @input="updateQuestionText" />
-                <button type="button" class="absolute top-0 right-0 flex size-8 items-center justify-center text-muted-foreground opacity-0 transition group-hover:opacity-100 hover:text-destructive" title="Delete question" @click="deleteQuestion">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
-                        <path
-                            d="m18 9-.84 8.398c-.127 1.273-.19 1.909-.48 2.39a2.5 2.5 0 0 1-1.075.973C15.098 21 14.46 21 13.18 21h-2.36c-1.279 0-1.918 0-2.425-.24a2.5 2.5 0 0 1-1.076-.973c-.288-.48-.352-1.116-.48-2.389L6 9m7.5 6.5v-5m-3 5v-5m-6-4h4.615m0 0 .386-2.672c.112-.486.516-.828.98-.828h3.038c.464 0 .867.342.98.828l.386 2.672m-5.77 0h5.77m0 0H19.5"
-                        />
-                    </svg>
-                </button>
+        <div class="flex-1 pr-20">
+            <div class="group/text relative">
+                <input type="text" class="w-full border border-transparent px-2 text-xl font-bold group-hover/text:border-input" :value="questionText" placeholder="Enter question..." @input="updateQuestionText" />
             </div>
-            <slot />
             <div v-if="!question.is_tiebreaker" v-show="expanded" class="mt-2 w-sm space-y-2 pl-1">
                 <QuestionAnswer
                     v-for="(answer, index) in answers"
