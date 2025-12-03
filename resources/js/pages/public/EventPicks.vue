@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import PicksQuestion from '@/components/picks/PicksQuestion.vue';
+import Card from '@/components/ui/card/Card.vue';
+import CardContent from '@/components/ui/card/CardContent.vue';
+import CardHeader from '@/components/ui/card/CardHeader.vue';
+import CardTitle from '@/components/ui/card/CardTitle.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { store } from '@/routes/picks';
 import { router } from '@inertiajs/vue3';
@@ -66,6 +70,17 @@ const errors = ref<{ message?: string; picks?: string }>({});
 
 const unansweredQuestions = computed(() => regularQuestions.value.filter((q) => !selectedAnswers.value[q.id]));
 
+const numPicksCorrect = computed(() => {
+    return props.picks?.filter((p) => p.is_correct).length || 0;
+});
+
+const maxPicksCorrect = computed(() => {
+    if (!props.picks) return 0;
+    const numCorrect = props.picks.filter((p) => p.is_correct).length;
+    const numUngraded = props.picks.filter((p) => !p.is_graded && !p.is_tiebreaker).length;
+    return numCorrect + numUngraded;
+});
+
 async function submitPicks() {
     processing.value = true;
     errors.value = {};
@@ -121,11 +136,22 @@ async function submitPicks() {
     <div class="px-5 py-6">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold">{{ event.title }}</h1>
-            <p v-if="event.intro_text" class="mt-2 text-gray-600">
+            <h1 class="text-center text-3xl font-bold">{{ event.title }}</h1>
+            <p v-if="event.intro_text && !hasSubmittedPicks" class="mt-2 text-gray-600">
                 {{ event.intro_text }}
             </p>
-            <p class="mt-2 text-sm text-gray-500">Welcome, {{ participant.first_name }} {{ participant.last_name }}</p>
+
+            <Card v-if="hasSubmittedPicks">
+                <CardHeader>
+                    <CardTitle>Welcome, {{ participant.first_name }} {{ participant.last_name }}</CardTitle>
+                    <CardContent class="px-0">
+                        <div v-if="hasSubmittedPicks">
+                            Picks correct: <strong>{{ numPicksCorrect }}</strong>
+                        </div>
+                        <p v-else>Picks not submitted yet.</p>
+                    </CardContent>
+                </CardHeader>
+            </Card>
         </div>
 
         <template v-if="isPreview">
