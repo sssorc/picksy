@@ -59,7 +59,7 @@ class LeaderboardController extends Controller
             ->where('is_tiebreaker', false)
             ->count();
 
-        return Inertia::render('Public/Leaderboard', [
+        return Inertia::render('public/EventLeaderboard', [
             'event' => [
                 'title' => $event->title,
                 'slug' => $event->slug,

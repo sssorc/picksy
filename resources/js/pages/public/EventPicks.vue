@@ -137,7 +137,7 @@ async function submitPicks() {
         <!-- Header -->
         <div class="mb-8">
             <h1 class="text-center text-3xl font-bold">{{ event.title }}</h1>
-            <p v-if="event.intro_text && !hasSubmittedPicks" class="mt-2 text-gray-600">
+            <p v-if="event.intro_text && !hasSubmittedPicks" class="my-4 text-center text-gray-600">
                 {{ event.intro_text }}
             </p>
 
@@ -154,6 +154,7 @@ async function submitPicks() {
             </Card>
         </div>
 
+        <!-- Preview Mode -->
         <template v-if="isPreview">
             <div class="space-y-6">
                 <div class="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
@@ -189,8 +190,9 @@ async function submitPicks() {
             </div>
         </template>
 
+        <!-- Picks window closed -->
         <template v-else-if="event.picks_closed || hasSubmittedPicks">
-            <div class="space-y-6">
+            <div v-if="hasSubmittedPicks" class="space-y-6">
                 <h2 class="text-xl font-semibold">Your Picks</h2>
 
                 <!-- Loop through picks -->
@@ -213,8 +215,13 @@ async function submitPicks() {
                     <PicksQuestion v-else mode="view" :question-text="pick.question_text" :answers="pick.answers" :selected-answer-id="pick.selected_answer_id" :is-graded="pick.is_graded" />
                 </template>
             </div>
+            <div v-else>
+                <h2>Picks are closed</h2>
+                <p>You can no longer submit picks.</p>
+            </div>
         </template>
 
+        <!-- Picks window open -->
         <template v-else>
             <div class="space-y-6">
                 <h2 class="text-xl font-semibold">Make Your Picks</h2>
