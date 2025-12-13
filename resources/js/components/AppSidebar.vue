@@ -8,6 +8,7 @@ import { index as publish } from '@/routes/publish';
 import { index as questions } from '@/routes/questions';
 import { type EventStatus, type NavItem } from '@/types';
 import { usePage } from '@inertiajs/vue3';
+import { PhCalendarDot, PhListNumbers, PhPaperPlaneTilt } from '@phosphor-icons/vue';
 import { HelpCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
@@ -23,9 +24,9 @@ const mainNavItems = computed((): NavItem[] => {
     // Default status if no event status
     if (!status) {
         return [
-            { title: 'Event', href: event(), status: 'open' },
-            { title: 'Questions', href: questions(), status: 'locked' },
-            { title: 'Publish', href: publish(), status: 'locked' },
+            { title: 'Event', href: event(), status: 'open', icon: PhCalendarDot },
+            { title: 'Questions', href: questions(), status: 'locked', icon: PhListNumbers },
+            { title: 'Publish', href: publish(), status: 'locked', icon: PhPaperPlaneTilt },
         ];
     }
 
@@ -53,9 +54,9 @@ const mainNavItems = computed((): NavItem[] => {
     }
 
     return [
-        { title: 'Event', href: event(), status: eventItemStatus },
-        { title: 'Questions', href: questions(), status: questionsItemStatus },
-        { title: 'Publish', href: publish(), status: publishItemStatus },
+        { title: 'Event', href: event(), status: eventItemStatus, icon: PhCalendarDot },
+        { title: 'Questions', href: questions(), status: questionsItemStatus, icon: PhListNumbers },
+        { title: 'Publish', href: publish(), status: publishItemStatus, icon: PhPaperPlaneTilt },
     ];
 });
 

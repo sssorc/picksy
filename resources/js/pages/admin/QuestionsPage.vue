@@ -185,9 +185,9 @@ async function saveQuestions() {
 
                     <Question v-if="tiebreakerQuestion" :key="tiebreakerQuestion.id || 'tiebreaker'" index="TB" :question="tiebreakerQuestion" @update="updateTiebreaker($event)" @delete="deleteTiebreaker"> </Question>
 
-                    <div class="flex flex-col gap-2">
-                        <button v-if="questionCount < 16" type="button" class="rounded-lg border-2 border-dashed border-muted-foreground/25 px-4 py-8 text-sm text-muted-foreground transition hover:border-muted-foreground/50 hover:text-foreground" @click="addQuestion">+ Add Question</button>
-                        <button v-if="!tiebreakerQuestion" type="button" class="rounded-lg border-2 border-dashed border-muted-foreground/25 px-4 py-8 text-sm text-muted-foreground transition hover:border-muted-foreground/50 hover:text-foreground" @click="addTiebreaker">+ Add Tiebreaker</button>
+                    <div class="flex gap-2">
+                        <Button variant="secondary" v-if="questionCount < 16" @click="addQuestion">+ Add Question</Button>
+                        <Button variant="outline" v-if="!tiebreakerQuestion" @click="addTiebreaker">+ Add Tiebreaker</Button>
                     </div>
                 </div>
 
