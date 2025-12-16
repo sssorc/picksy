@@ -4,6 +4,7 @@ import AlertError from '@/components/AlertError.vue';
 import AlertSuccess from '@/components/AlertSuccess.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -42,8 +43,9 @@ const form = useForm({
 });
 
 const saving = ref(false);
-const saveError = ref('');
-const saveSuccess = ref('');
+const errorMessage = ref('');
+const successMessage = ref('');
+const showDeleteEventModal = ref(false);
 
 const formErrors = computed(() => {
     const errors = Object.values(form.errors);
@@ -59,8 +61,8 @@ const dateFormat = {
 
 async function handleSubmit() {
     saving.value = true;
-    saveError.value = '';
-    saveSuccess.value = '';
+    errorMessage.value = '';
+    successMessage.value = '';
 
     try {
         const data = { ...form.data() };
@@ -73,7 +75,7 @@ async function handleSubmit() {
         await axios.post(store().url, data);
 
         form.clearErrors();
-        saveSuccess.value = 'Event saved successfully!';
+        successMessage.value = 'Event saved successfully!';
 
         // Reload to update shared data (including eventStatus)
         router.reload();
@@ -81,12 +83,16 @@ async function handleSubmit() {
         if (error.response?.data?.errors) {
             form.setError(error.response.data.errors);
         } else {
-            saveError.value = error.response?.data?.message || 'Failed to save event';
+            errorMessage.value = error.response?.data?.message || 'Failed to save event';
         }
     } finally {
         saving.value = false;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+}
+
+async function deleteEvent() {
+    // TODO
 }
 </script>
 
@@ -97,9 +103,9 @@ async function handleSubmit() {
         <form @submit.prevent="handleSubmit" class="flex h-full flex-1 flex-col gap-4 p-4">
             <h2 class="text-2xl font-bold">Event</h2>
 
-            <AlertError v-if="saveError" :errors="[saveError]" />
+            <AlertError v-if="errorMessage" :errors="[errorMessage]" />
             <AlertError v-else-if="formErrors" title="Error saving event" :errors="formErrors" />
-            <AlertSuccess v-else-if="saveSuccess" :message="saveSuccess" />
+            <AlertSuccess v-else-if="successMessage" :message="successMessage" />
 
             <Card>
                 <CardHeader>
@@ -156,7 +162,24 @@ async function handleSubmit() {
                 </CardContent>
             </Card>
 
-            <div class="my-4 flex justify-end gap-2">
+            <div class="my-4 flex justify-between gap-2">
+                <Dialog>
+                    <DialogTrigger as-child>
+                        <button type="button" class="cursor-pointer text-sm text-red-500 hover:underline">Delete event</button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Delete event</DialogTitle>
+                            <DialogDescription>All event data will be deleted and all pages inaccessible. This action cannot be undone.</DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <DialogClose as-child>
+                                <Button type="button" variant="secondary" @click="showDeleteEventModal = false">Cancel</Button>
+                            </DialogClose>
+                            <Button type="button" variant="destructive" @click="deleteEvent">Delete event</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
                 <Button type="submit" :disabled="saving">
                     {{ saving ? 'Saving...' : 'Save Event' }}
                 </Button>

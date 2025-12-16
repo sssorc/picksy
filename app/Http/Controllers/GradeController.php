@@ -21,6 +21,14 @@ class GradeController extends Controller
             ->where('is_published', true)
             ->firstOrFail();
 
+
+		// Check if event has started
+        if (! $event->hasStarted()) {
+            return Inertia::render('public/EventNotStarted', [
+                'event' => $event,
+            ]);
+        }
+
         // Check if grading password is authenticated
         $isGradingAuthenticated = session()->get("event_{$event->id}_grading_auth", false);
 
