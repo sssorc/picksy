@@ -3,13 +3,14 @@ import { store } from '@/actions/App/Http/Controllers/EventController';
 import AlertError from '@/components/AlertError.vue';
 import AlertSuccess from '@/components/AlertSuccess.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
+import { PhWarning } from '@phosphor-icons/vue';
 import { VueDatePicker } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import axios from 'axios';
@@ -113,51 +114,64 @@ async function deleteEvent() {
                     <!-- <CardDescription> Set up your event information. This will be visible to participants. </CardDescription> -->
                 </CardHeader>
                 <CardContent class="space-y-6">
-                    <div class="space-y-2">
-                        <Label for="title">Event Title *</Label>
-                        <Input id="title" v-model="form.title" type="text" class="w-xs max-w-full" placeholder="e.g., John & Jane's Wedding" :disabled="saving" required />
+                    <div class="grid gap-6 lg:grid-cols-2">
+                        <div class="space-y-2">
+                            <Label for="title">Event Title</Label>
+                            <Input id="title" v-model="form.title" type="text" class="w-xs max-w-full" placeholder="e.g., John & Jane's Wedding" :disabled="saving" required />
+                        </div>
+                        <div class="w-xs max-w-full space-y-2">
+                            <Label for="start_datetime">Event Start Date & Time</Label>
+                            <VueDatePicker id="start_datetime" v-model="form.start_datetime" :disabled="saving" :enable-time-picker="true" :formats="dateFormat" :min-date="new Date()" placeholder="Select date and time" required />
+                            <p class="text-sm text-gray-500">Users cannot submit picks before this time.</p>
+                        </div>
                     </div>
 
                     <div class="space-y-2">
-                        <Label for="intro_text">Intro Text (Optional)</Label>
+                        <Label for="intro_text">Intro Text <small class="text-gray-500">(Optional)</small></Label>
                         <p class="text-sm text-gray-500">This will display above the questions when users make their picks.</p>
                         <Textarea id="intro_text" v-model="form.intro_text" class="w-sm max-w-full" placeholder="Optional welcome message for participants" :disabled="saving" rows="3" />
-                    </div>
-
-                    <div class="w-xs max-w-full space-y-2">
-                        <Label for="start_datetime">Event Start Date & Time *</Label>
-                        <p class="text-sm text-gray-500">Users cannot submit picks before this time.</p>
-                        <VueDatePicker id="start_datetime" v-model="form.start_datetime" :disabled="saving" :enable-time-picker="true" :formats="dateFormat" :min-date="new Date()" placeholder="Select date and time" required />
                     </div>
                 </CardContent>
             </Card>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Technical Details</CardTitle>
-                    <CardDescription> Set up your event information. This will be visible to participants. </CardDescription>
+                    <CardTitle>Choose URL</CardTitle>
                 </CardHeader>
                 <CardContent class="space-y-8">
                     <div class="space-y-2">
-                        <Label for="slug">Event URL *</Label>
-                        <p class="text-sm text-gray-500">'Use lowercase letters, numbers, and hyphens only.</p>
-                        <div class="flex items-center">
+                        <Label for="slug">Event URL</Label>
+                        <p v-if="event?.is_published" class="text-sm text-gray-500">
+                            <a :href="`${appUrl}/${event.slug}`" target="_blank" class="underline">{{ appUrl.replace(/^https?:\/\//, '') }}/{{ event.slug }}</a
+                            >/
+                        </p>
+                        <div v-else class="flex items-center">
                             <span class="text-gray-500">{{ appUrl.replace(/^https?:\/\//, '') }}/</span>
                             <Input id="slug" v-model="form.slug" type="text" class="w-xs max-w-full" placeholder="e.g., john-jane-wedding" :disabled="saving || event?.is_published" required />
                         </div>
-                        <small>Cannot be changed after publishing.</small>
+                        <template v-if="!event?.is_published">
+                            <p class="text-sm text-gray-500">Letters, numbers, and hyphens only.</p>
+                            <p class="flex items-center gap-2 text-sm text-gray-500"><PhWarning class="text-yellow-400" weight="fill" />Cannot be changed after publishing.</p>
+                        </template>
                     </div>
+                </CardContent>
+            </Card>
 
+            <Card>
+                <CardHeader>
+                    <CardTitle>Password</CardTitle>
+                </CardHeader>
+                <CardContent class="space-y-8">
                     <div class="space-y-2">
-                        <Label for="password">Event Password (Optional)</Label>
-                        <p class="text-sm text-gray-500">Participants will need this password to access your event</p>
+                        <Label for="password">Event Password <small class="text-gray-500">(Optional)</small></Label>
                         <Input id="password" v-model="form.password" class="w-xs max-w-full" type="text" placeholder="Leave blank for no password" :disabled="saving" />
+                        <p class="text-sm text-gray-500">Participants will need this password to access your event</p>
                     </div>
 
                     <div class="space-y-2">
-                        <Label for="grading_password">Grading Password *</Label>
-                        <p class="text-sm text-gray-500">This password is required to grade questions during the event.</p>
-                        <Input id="grading_password" v-model="form.grading_password" class="w-xs max-w-full" type="text" placeholder="Required for grading questions" :disabled="saving" required />
+                        <Label for="grading_password">Grading Passphrase</Label>
+                        <p v-if="event?.grading_password" class="text-sm text-gray-500">{{ event.grading_password }}</p>
+                        <p v-else class="text-sm text-gray-500">This will be auto-generated after saving.</p>
                     </div>
                 </CardContent>
             </Card>

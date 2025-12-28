@@ -142,7 +142,7 @@ function toggleExpanded() {
             <div class="group/text relative">
                 <input type="text" class="w-full border border-transparent px-2 text-xl font-bold group-hover/text:border-input" :value="questionText" placeholder="Enter question..." @input="updateQuestionText" />
             </div>
-            <div v-if="!question.is_tiebreaker" v-show="expanded" class="mt-2 w-sm space-y-2 pl-1">
+            <div v-if="!question.is_tiebreaker" v-show="expanded" class="mt-4 w-sm space-y-2.5 pl-1">
                 <QuestionAnswer
                     v-for="(answer, index) in answers"
                     :key="answer.id || `new-${index}`"
@@ -153,15 +153,9 @@ function toggleExpanded() {
                     @drag-start="handleAnswerDragStart(index)"
                     @drag-over="handleAnswerDragOver($event, index)"
                     @drop="handleAnswerDrop"
+                    class=""
                 />
-                <button
-                    v-if="canAddAnswer"
-                    type="button"
-                    class="flex w-full cursor-pointer items-center justify-center border-2 border-dashed border-muted-foreground/25 bg-background px-2 py-2 text-xs text-muted-foreground transition hover:border-muted-foreground/50 hover:text-foreground"
-                    @click="addAnswer"
-                >
-                    + Add Answer
-                </button>
+                <button v-if="canAddAnswer" type="button" class="mt-2 cursor-pointer text-sm font-semibold text-sky-600 transition hover:underline" @click="addAnswer">+ Add answer</button>
             </div>
         </div>
     </div>

@@ -164,39 +164,39 @@ async function saveQuestions() {
             <AlertError v-else-if="formErrors.length > 0" title="Error saving questions" :errors="formErrors" />
             <AlertSuccess v-else-if="saveSuccess" :message="saveSuccess" />
 
-            <div v-if="!event">Please save your event details first.</div>
-
-            <template v-else>
-                <div class="flex justify-end gap-2">
-                    <button type="button" class="cursor-pointer text-sm text-muted-foreground transition hover:text-foreground" @click="collapseAll">Collapse all</button>
-                    <button type="button" class="cursor-pointer text-sm text-muted-foreground transition hover:text-foreground" @click="expandAll">Expand all</button>
+            <div class="flex items-end justify-between">
+                <div class="text-sm text-foreground">{{ questionCount }} of 16 questions created</div>
+                <div class="flex justify-end gap-4">
+                    <button type="button" class="cursor-pointer text-sm text-foreground hover:underline" @click="collapseAll">Collapse all</button>
+                    <button type="button" class="cursor-pointer text-sm text-foreground hover:underline" @click="expandAll">Expand all</button>
                 </div>
-                <div class="space-y-4">
-                    <Question
-                        v-for="(question, index) in regularQuestions"
-                        :key="question.id || `new-${index}`"
-                        :index="index + 1"
-                        :question="question"
-                        :expanded="expandedStates[index]"
-                        @update="updateQuestion(index, $event)"
-                        @delete="deleteQuestion(index)"
-                        @update:expanded="updateExpandedState(index, $event)"
-                    />
+            </div>
 
-                    <Question v-if="tiebreakerQuestion" :key="tiebreakerQuestion.id || 'tiebreaker'" index="TB" :question="tiebreakerQuestion" @update="updateTiebreaker($event)" @delete="deleteTiebreaker"> </Question>
+            <div class="space-y-4">
+                <Question
+                    v-for="(question, index) in regularQuestions"
+                    :key="question.id || `new-${index}`"
+                    :index="index + 1"
+                    :question="question"
+                    :expanded="expandedStates[index]"
+                    @update="updateQuestion(index, $event)"
+                    @delete="deleteQuestion(index)"
+                    @update:expanded="updateExpandedState(index, $event)"
+                />
 
-                    <div class="flex gap-2">
-                        <Button variant="secondary" v-if="questionCount < 16" @click="addQuestion">+ Add Question</Button>
-                        <Button variant="outline" v-if="!tiebreakerQuestion" @click="addTiebreaker">+ Add Tiebreaker</Button>
-                    </div>
+                <Question v-if="tiebreakerQuestion" :key="tiebreakerQuestion.id || 'tiebreaker'" index="TB" :question="tiebreakerQuestion" @update="updateTiebreaker($event)" @delete="deleteTiebreaker"> </Question>
+
+                <div class="flex gap-2">
+                    <Button variant="secondary" v-if="questionCount < 16" @click="addQuestion">+ Add Question</Button>
+                    <Button variant="outline" v-if="!tiebreakerQuestion" @click="addTiebreaker">+ Add Tiebreaker</Button>
                 </div>
+            </div>
 
-                <div class="flex justify-end">
-                    <Button type="button" :disabled="saving || disableSave" @click="saveQuestions">
-                        {{ saving ? 'Saving...' : 'Save Questions' }}
-                    </Button>
-                </div>
-            </template>
+            <div class="flex justify-end">
+                <Button type="button" :disabled="saving || disableSave" @click="saveQuestions">
+                    {{ saving ? 'Saving...' : 'Save Questions' }}
+                </Button>
+            </div>
         </div>
     </AppLayout>
 </template>
