@@ -35,6 +35,10 @@ class QuestionController extends Controller
             return response()->json(['message' => 'Event not found.'], 404);
         }
 
+        if ($event->hasStarted()) {
+            return response()->json(['message' => 'Questions cannot be updated after the event has started.'], 422);
+        }
+
         DB::transaction(function () use ($request, $event) {
             // Get existing question IDs
             $submittedQuestionIds = collect($request->questions)->pluck('id')->filter();
