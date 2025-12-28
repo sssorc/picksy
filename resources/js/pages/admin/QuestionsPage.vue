@@ -158,7 +158,7 @@ async function saveQuestions() {
 
     <AppLayout>
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
-            <h2 class="text-2xl font-bold">Questions</h2>
+            <h2 class="mt-3 mb-4 text-2xl font-bold">Questions</h2>
 
             <AlertError v-if="saveError" :errors="[saveError]" />
             <AlertError v-else-if="formErrors.length > 0" title="Error saving questions" :errors="formErrors" />

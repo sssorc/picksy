@@ -13,8 +13,12 @@ class EventController extends Controller
     {
         $event = auth()->user()->event()->with('questions.answers')->first();
 
+        if ($event) {
+            $event->has_started = $event->hasStarted();
+        }
+
         return Inertia::render('admin/EventPage', [
-            'event' => $event,
+            'userEvent' => $event,
             'appUrl' => config('app.url'),
         ]);
     }

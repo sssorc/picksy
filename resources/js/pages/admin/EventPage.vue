@@ -8,6 +8,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { formatEventDateTime } from '@/composables/useDateFormat';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { PhWarning } from '@phosphor-icons/vue';
@@ -25,22 +26,23 @@ interface Event {
     grading_password: string;
     start_datetime: string;
     is_published: boolean;
+    has_started?: boolean;
 }
 
 interface Props {
-    event?: Event | null;
+    userEvent?: Event | null;
     appUrl: string;
 }
 
 const props = defineProps<Props>();
 
 const form = useForm({
-    title: props.event?.title || '',
-    intro_text: props.event?.intro_text || '',
-    slug: props.event?.slug || '',
-    password: props.event?.password || '',
-    grading_password: props.event?.grading_password || '',
-    start_datetime: props.event?.start_datetime ? new Date(props.event.start_datetime) : '',
+    title: props.userEvent?.title || '',
+    intro_text: props.userEvent?.intro_text || '',
+    slug: props.userEvent?.slug || '',
+    password: props.userEvent?.password || '',
+    grading_password: props.userEvent?.grading_password || '',
+    start_datetime: props.userEvent?.start_datetime ? new Date(props.userEvent.start_datetime) : '',
 });
 
 const saving = ref(false);
@@ -102,7 +104,7 @@ async function deleteEvent() {
 
     <AppLayout>
         <form @submit.prevent="handleSubmit" class="flex h-full flex-1 flex-col gap-4 p-4">
-            <h2 class="text-2xl font-bold">Event</h2>
+            <h2 class="mt-3 mb-4 text-2xl font-bold">Event</h2>
 
             <AlertError v-if="errorMessage" :errors="[errorMessage]" />
             <AlertError v-else-if="formErrors" title="Error saving event" :errors="formErrors" />
@@ -121,8 +123,11 @@ async function deleteEvent() {
                         </div>
                         <div class="w-xs max-w-full space-y-2">
                             <Label for="start_datetime">Event Start Date & Time</Label>
-                            <VueDatePicker id="start_datetime" v-model="form.start_datetime" :disabled="saving" :enable-time-picker="true" :formats="dateFormat" :min-date="new Date()" placeholder="Select date and time" required />
-                            <p class="text-sm text-gray-500">Users cannot submit picks before this time.</p>
+                            <p v-if="userEvent?.has_started" class="text-sm text-gray-500">{{ formatEventDateTime(userEvent.start_datetime) }}</p>
+                            <template v-else>
+                                <VueDatePicker id="start_datetime" v-model="form.start_datetime" :disabled="saving" :enable-time-picker="true" :formats="dateFormat" :min-date="new Date()" placeholder="Select date and time" required />
+                                <p class="text-sm text-gray-500">Users cannot submit picks before this time.</p>
+                            </template>
                         </div>
                     </div>
 
@@ -141,15 +146,15 @@ async function deleteEvent() {
                 <CardContent class="space-y-8">
                     <div class="space-y-2">
                         <Label for="slug">Event URL</Label>
-                        <p v-if="event?.is_published" class="text-sm text-gray-500">
-                            <a :href="`${appUrl}/${event.slug}`" target="_blank" class="underline">{{ appUrl.replace(/^https?:\/\//, '') }}/{{ event.slug }}</a
+                        <p v-if="userEvent?.is_published" class="text-sm text-gray-500">
+                            <a :href="`${appUrl}/${userEvent.slug}`" target="_blank" class="underline">{{ appUrl.replace(/^https?:\/\//, '') }}/{{ userEvent.slug }}</a
                             >/
                         </p>
                         <div v-else class="flex items-center">
                             <span class="text-gray-500">{{ appUrl.replace(/^https?:\/\//, '') }}/</span>
-                            <Input id="slug" v-model="form.slug" type="text" class="w-xs max-w-full" placeholder="e.g., john-jane-wedding" :disabled="saving || event?.is_published" required />
+                            <Input id="slug" v-model="form.slug" type="text" class="w-xs max-w-full" placeholder="e.g., john-jane-wedding" :disabled="saving || userEvent?.is_published" required />
                         </div>
-                        <template v-if="!event?.is_published">
+                        <template v-if="!userEvent?.is_published">
                             <p class="text-sm text-gray-500">Letters, numbers, and hyphens only.</p>
                             <p class="flex items-center gap-2 text-sm text-gray-500"><PhWarning class="text-yellow-400" weight="fill" />Cannot be changed after publishing.</p>
                         </template>
@@ -170,7 +175,7 @@ async function deleteEvent() {
 
                     <div class="space-y-2">
                         <Label for="grading_password">Grading Passphrase</Label>
-                        <p v-if="event?.grading_password" class="text-sm text-gray-500">{{ event.grading_password }}</p>
+                        <p v-if="userEvent?.grading_password" class="text-sm text-gray-500">{{ userEvent.grading_password }}</p>
                         <p v-else class="text-sm text-gray-500">This will be auto-generated after saving.</p>
                     </div>
                 </CardContent>

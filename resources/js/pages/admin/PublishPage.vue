@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectItem } from '@/components/ui/select';
+import { formatEventDateTime } from '@/composables/useDateFormat';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { PhConfetti } from '@phosphor-icons/vue';
-import { format, getMinutes } from 'date-fns';
 import { computed } from 'vue';
 
 // TODO errorhandling
@@ -30,12 +30,7 @@ const form = useForm({
 
 const isFree = computed(() => form.max_entries === '10');
 
-const formattedStartDatetime = computed(() => {
-    const date = new Date(props.event.start_datetime);
-    const minutes = getMinutes(date);
-    const timeFormat = minutes === 0 ? 'haaa' : 'h:mmaaa';
-    return format(date, `${timeFormat} 'on' MMMM do`);
-});
+const formattedStartDatetime = computed(() => formatEventDateTime(props.event.start_datetime));
 
 function handleSubmit() {
     form.post(store.url());
@@ -46,7 +41,7 @@ function handleSubmit() {
 
     <AppLayout>
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
-            <h2 class="mt-3 mb-6 text-2xl font-bold">Publish</h2>
+            <h2 class="mt-3 mb-4 text-2xl font-bold">Publish</h2>
             <div v-if="event.is_published">
                 <Alert>
                     <PhConfetti />
@@ -57,13 +52,13 @@ function handleSubmit() {
                         </p>
                         <ul class="mt-2 list-inside list-disc space-y-1">
                             <li v-if="event.password">
-                                Use password <strong>{{ event.password }}</strong>
+                                Event password is <strong>{{ event.password }}</strong>
                             </li>
                             <li>
-                                Submissions will open at <span class="font-bold">{{ formattedStartDatetime }}</span>
+                                Submissions will open on <span class="font-bold">{{ formattedStartDatetime }}</span>
                             </li>
                             <li>
-                                Grade questions at <a :href="`${appUrl}/${event.slug}/grade`" target="_blank" class="underline">{{ appUrl.replace(/^https?:\/\//, '') }}/{{ event.slug }}/grade</a> with password <span class="font-bold">{{ event.grading_password }}</span>
+                                Grade questions at <a :href="`${appUrl}/${event.slug}/grade`" target="_blank" class="underline">{{ appUrl.replace(/^https?:\/\//, '') }}/{{ event.slug }}/grade</a> with passphrase <strong>{{ event.grading_password }}</strong>
                             </li>
                         </ul>
                         <p class="mt-12">All event data will be deleted 60 days after the event.</p>
