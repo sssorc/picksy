@@ -163,7 +163,7 @@ async function deleteEvent() {
                         </div>
                         <template v-if="!userEvent?.is_published">
                             <p class="text-sm text-gray-500">Letters, numbers, and hyphens only.</p>
-                            <p class="flex items-center gap-2 text-sm text-gray-500"><PhWarning class="text-yellow-400" weight="fill" />Cannot be changed after publishing.</p>
+                            <p class="flex items-center gap-2 text-sm text-gray-500"><PhWarning fill="foreground" />Cannot be changed after publishing.</p>
                         </template>
                     </div>
                 </CardContent>
