@@ -2,9 +2,8 @@
 import { store } from '@/actions/App/Http/Controllers/PublishController';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Select, SelectItem } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatEventDateTime } from '@/composables/useDateFormat';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
@@ -65,30 +64,31 @@ function handleSubmit() {
                     </AlertDescription>
                 </Alert>
             </div>
-            <Card v-else>
-                <CardHeader>
-                    <CardTitle>Publish</CardTitle>
-                    <CardDescription>Publish your event and make it available to participants.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form @submit.prevent="handleSubmit" class="space-y-6">
-                        <div class="text-sm text-muted-foreground">
-                            <p class="mb-4">Publishing your event will make it available to participants at the URL you specified.</p>
-                        </div>
-                        <div class="space-y-2">
-                            <Label for="tier">Select Tier</Label>
-                            <Select v-model="form.max_entries" placeholder="Select a tier">
-                                <SelectItem value="10">Free - Up to 10 entries</SelectItem>
-                                <SelectItem value="60">$15 - Up to 60 entries</SelectItem>
-                                <SelectItem value="0">$100 - Unlimited entries</SelectItem>
+            <div v-else>
+                <p>Publish your event and make it available to participants.</p>
+                <p class="mb-4">You can edit questions and event details and (excluding the URL) after publishing.</p>
+                <form @submit.prevent="handleSubmit" class="space-y-6">
+                    <div class="text-sm text-muted-foreground"></div>
+                    <div class="space-y-2">
+                        <Label for="tier">Select Tier</Label>
+                        <div class="w-sm max-w-full">
+                            <Select v-model="form.max_entries">
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a tier" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="10">Free - Up to 10 entries</SelectItem>
+                                    <SelectItem value="60">$15 - Up to 30 entries</SelectItem>
+                                    <SelectItem value="0">$100 - Unlimited entries</SelectItem>
+                                </SelectContent>
                             </Select>
                         </div>
-                        <Button type="submit" :disabled="form.processing" :loading="form.processing">
-                            {{ isFree ? 'Publish Event' : 'Proceed to Payment' }}
-                        </Button>
-                    </form>
-                </CardContent>
-            </Card>
+                    </div>
+                    <Button type="submit" :disabled="form.processing" :loading="form.processing">
+                        {{ isFree ? 'Publish Event' : 'Proceed to Payment' }}
+                    </Button>
+                </form>
+            </div>
         </div>
     </AppLayout>
 </template>
