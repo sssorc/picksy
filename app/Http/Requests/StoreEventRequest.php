@@ -35,7 +35,7 @@ class StoreEventRequest extends FormRequest
                 Rule::unique('events', 'slug')->ignore($event?->id),
             ],
             'password' => ['nullable', 'string', 'max:255'],
-            'grading_password' => ['required', 'string', 'max:255'],
+            'grading_password' => ['nullable', 'string', 'max:255'],
             'start_datetime' => ['required', 'date', 'after:now'],
         ];
     }

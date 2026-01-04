@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6438da82ef945b2a4c9dc7fb3fa4b453",
+    "content-hash": "d4e9bd8a0a0ea2ae8229a60dc253cbee",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -60,6 +60,59 @@
                 "source": "https://github.com/Bacon/BaconQrCode/tree/v3.0.3"
             },
             "time": "2025-11-19T17:15:36+00:00"
+        },
+        {
+            "name": "barzo/password-generator",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/denys-potapov/password-generator.git",
+                "reference": "8cd681a7c61c42f36906dd452410ba229e544fef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/denys-potapov/password-generator/zipball/8cd681a7c61c42f36906dd452410ba229e544fef",
+                "reference": "8cd681a7c61c42f36906dd452410ba229e544fef",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.3.0"
+            },
+            "suggest": {
+                "ext-openssl": "Allows to use cryptographically strong random generator"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Barzo\\Password\\": [
+                        "src/"
+                    ],
+                    "Barzo\\Password\\Tests\\": [
+                        "tests/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Denys Potapov",
+                    "email": "denys.potapov@gmail.com",
+                    "homepage": "http://denyspotapov.com"
+                }
+            ],
+            "description": "PHP library for generating easy to remember but hard to guess passwords",
+            "homepage": "https://github.com/denys-potapov/password-generator",
+            "keywords": [
+                "password"
+            ],
+            "support": {
+                "issues": "https://github.com/denys-potapov/password-generator/issues",
+                "source": "https://github.com/denys-potapov/password-generator/tree/v1.0.0"
+            },
+            "time": "2020-11-02T11:43:56+00:00"
         },
         {
             "name": "brick/math",

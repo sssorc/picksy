@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Barzo\Password\Generator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,7 +23,7 @@ class EventFactory extends Factory
             'intro_text' => fake()->optional()->paragraph(),
             'slug' => fake()->unique()->slug(),
             'password' => fake()->optional()->password(),
-            'grading_password' => fake()->password(),
+            'grading_password' => Generator::generateEn(2, '-'),
             'start_datetime' => fake()->dateTimeBetween('+1 week', '+1 month'),
             'is_published' => false,
             'published_at' => null,

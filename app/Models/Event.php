@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Barzo\Password\Generator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Event extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::creating(function (Event $event) {
+            if (empty($event->grading_password)) {
+                $event->grading_password = Generator::generateEn(2, '-');
+            }
+        });
+    }
 
     protected $fillable = [
         'user_id',
