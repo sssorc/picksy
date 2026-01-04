@@ -210,10 +210,6 @@ async function deleteEvent() {
                 </Dialog>
                 <Button type="submit" :disabled="saving" class="ml-auto" :loading="saving">Save Event</Button>
             </div>
-            <div class="grid">
-                <Button type="submit" :disabled="saving" class="ml-auto" :loading="false">Save Event</Button>
-                <Button type="submit" :disabled="saving" class="ml-auto" :loading="true">Save Event</Button>
-            </div>
         </form>
     </AppLayout>
 </template>

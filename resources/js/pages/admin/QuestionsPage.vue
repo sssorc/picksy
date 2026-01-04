@@ -138,7 +138,7 @@ async function saveQuestions() {
 
         saveSuccess.value = response.data.message;
         // Reload to get updated IDs and shared data (including eventStatus)
-        router.reload({ only: ['event'] });
+        router.reload({ only: ['event', 'eventStatus'] });
     } catch (error: any) {
         if (error.response?.data?.errors) {
             formErrors.value = Object.values(error.response.data.errors).flat() as string[];
