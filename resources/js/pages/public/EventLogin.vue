@@ -3,7 +3,6 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { store } from '@/routes/participant';
 import { Head, router } from '@inertiajs/vue3';
 import axios from 'axios';
@@ -114,8 +113,7 @@ function cancelDuplicate() {
                         <InputError :message="errors.password" />
                     </div>
 
-                    <Button type="submit" class="w-full" :disabled="processing">
-                        <Spinner v-if="processing" />
+                    <Button type="submit" class="w-full" :disabled="processing" :loading="processing">
                         Continue
                     </Button>
                 </form>
@@ -136,8 +134,7 @@ function cancelDuplicate() {
 
                 <div class="flex gap-3">
                     <Button variant="outline" class="flex-1" @click="cancelDuplicate" :disabled="processing"> Cancel </Button>
-                    <Button class="flex-1" @click="confirmIdentity" :disabled="processing">
-                        <Spinner v-if="processing" />
+                    <Button class="flex-1" @click="confirmIdentity" :disabled="processing" :loading="processing">
                         Yes, that's me
                     </Button>
                 </div>

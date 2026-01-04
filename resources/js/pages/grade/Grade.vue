@@ -144,8 +144,8 @@ function clearQuestion(questionId: number) {
 
             <!-- Submit button -->
             <div class="sticky bottom-20 space-y-2">
-                <Button type="submit" class="w-full" :disabled="processing || !hasChanges">
-                    {{ processing ? 'Saving...' : hasChanges ? 'Save Grades' : 'No changes to save' }}
+                <Button type="submit" class="w-full" :disabled="processing || !hasChanges" :loading="processing">
+                    {{ hasChanges ? 'Save Grades' : 'No changes to save' }}
                 </Button>
             </div>
         </form>

@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\HelpController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ParticipantEventController;
 use App\Http\Controllers\PickController;
@@ -12,13 +13,17 @@ use App\Http\Controllers\PublishController;
 use App\Http\Controllers\QuestionController;
 use Illuminate\Support\Facades\Route;
 
+// Public Marketing Page
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('home');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Event Management
     Route::get('event', [EventController::class, 'edit'])->name('event.edit');
     Route::post('event', [EventController::class, 'store'])->name('event.store');
+    Route::delete('event', [EventController::class, 'destroy'])->name('event.destroy');
 
     // Questions Management
     Route::get('questions', [QuestionController::class, 'index'])->name('questions.index');

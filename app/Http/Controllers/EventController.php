@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEventRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -36,5 +37,17 @@ class EventController extends Controller
             'message' => 'Event saved successfully.',
             'event' => $event,
         ]);
+    }
+
+    public function destroy(): RedirectResponse
+    {
+        $user = auth()->user();
+        $event = $user->event;
+
+        if ($event) {
+            $event->delete();
+        }
+
+        return redirect()->route('home')->with('success', 'Event deleted successfully.');
     }
 }

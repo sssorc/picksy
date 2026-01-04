@@ -3,7 +3,6 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { password } from '@/routes/grade';
 import { Head, useForm } from '@inertiajs/vue3';
 
@@ -46,8 +45,7 @@ function handleSubmit() {
                         <InputError :message="form.errors.password" />
                     </div>
 
-                    <Button type="submit" class="w-full" :disabled="form.processing">
-                        <Spinner v-if="form.processing" />
+                    <Button type="submit" class="w-full" :disabled="form.processing" :loading="form.processing">
                         Continue
                     </Button>
                 </form>

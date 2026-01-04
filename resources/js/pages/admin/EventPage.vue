@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { store } from '@/actions/App/Http/Controllers/EventController';
+import { destroy, store } from '@/actions/App/Http/Controllers/EventController';
 import AlertError from '@/components/AlertError.vue';
 import AlertSuccess from '@/components/AlertSuccess.vue';
 import { Button } from '@/components/ui/button';
@@ -94,8 +94,15 @@ async function handleSubmit() {
     }
 }
 
+const deleting = ref(false);
+
 async function deleteEvent() {
-    // TODO
+    deleting.value = true;
+    router.delete(destroy().url, {
+        onFinish: () => {
+            deleting.value = false;
+        },
+    });
 }
 </script>
 
@@ -182,7 +189,7 @@ async function deleteEvent() {
             </Card>
 
             <div class="my-4 flex justify-between gap-2">
-                <Dialog>
+                <Dialog v-if="userEvent">
                     <DialogTrigger as-child>
                         <button type="button" class="cursor-pointer text-sm text-red-500 hover:underline">Delete event</button>
                     </DialogTrigger>
@@ -195,13 +202,17 @@ async function deleteEvent() {
                             <DialogClose as-child>
                                 <Button type="button" variant="secondary" @click="showDeleteEventModal = false">Cancel</Button>
                             </DialogClose>
-                            <Button type="button" variant="destructive" @click="deleteEvent">Delete event</Button>
+                            <Button type="button" variant="destructive" :disabled="deleting" @click="deleteEvent">
+                                {{ deleting ? 'Deleting...' : 'Delete event' }}
+                            </Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
-                <Button type="submit" :disabled="saving">
-                    {{ saving ? 'Saving...' : 'Save Event' }}
-                </Button>
+                <Button type="submit" :disabled="saving" class="ml-auto" :loading="saving">Save Event</Button>
+            </div>
+            <div class="grid">
+                <Button type="submit" :disabled="saving" class="ml-auto" :loading="false">Save Event</Button>
+                <Button type="submit" :disabled="saving" class="ml-auto" :loading="true">Save Event</Button>
             </div>
         </form>
     </AppLayout>

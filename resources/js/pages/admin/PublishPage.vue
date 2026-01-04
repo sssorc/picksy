@@ -83,8 +83,8 @@ function handleSubmit() {
                                 <SelectItem value="0">$100 - Unlimited entries</SelectItem>
                             </Select>
                         </div>
-                        <Button type="submit" :disabled="form.processing">
-                            {{ form.processing ? (isFree ? 'Publishing...' : 'Proceed to Payment...') : isFree ? 'Publish Event' : 'Proceed to Payment' }}
+                        <Button type="submit" :disabled="form.processing" :loading="form.processing">
+                            {{ isFree ? 'Publish Event' : 'Proceed to Payment' }}
                         </Button>
                     </form>
                 </CardContent>

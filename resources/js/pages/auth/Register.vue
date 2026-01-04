@@ -4,7 +4,6 @@ import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
@@ -41,8 +40,7 @@ import { Form, Head } from '@inertiajs/vue3';
                     <InputError :message="errors.password_confirmation" />
                 </div>
 
-                <Button type="submit" class="mt-2 w-full" tabindex="5" :disabled="processing" data-test="register-user-button">
-                    <Spinner v-if="processing" />
+                <Button type="submit" class="mt-2 w-full" tabindex="5" :disabled="processing" :loading="processing" data-test="register-user-button">
                     Create account
                 </Button>
             </div>
