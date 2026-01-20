@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Route;
 // Public Marketing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Public Help Page
+Route::get('help', [HelpController::class, 'index'])->name('help.index');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -37,9 +40,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('preview/{slug}', [PreviewController::class, 'show'])->name('preview.show');
     Route::get('preview/{slug}/picks', [PreviewController::class, 'picks'])->name('preview.picks');
     Route::get('preview/{slug}/leaderboard', [PreviewController::class, 'leaderboard'])->name('preview.leaderboard');
-
-    // Help
-    Route::get('help', [HelpController::class, 'index'])->name('help.index');
 });
 
 // Stripe Webhook (no auth/CSRF needed)

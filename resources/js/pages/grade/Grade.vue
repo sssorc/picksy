@@ -35,7 +35,7 @@ interface Props {
 const props = defineProps<Props>();
 
 defineOptions({
-    layout: PublicLayout,
+    layout: (h: any, page: any) => h(PublicLayout, { showBottomNav: false }, () => page),
 });
 
 // Track selected correct answers for each question

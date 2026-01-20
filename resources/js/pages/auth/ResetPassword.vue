@@ -40,9 +40,7 @@ const inputEmail = ref(props.email);
                     <InputError :message="errors.password_confirmation" />
                 </div>
 
-                <Button type="submit" class="mt-4 w-full" :disabled="processing" :loading="processing" data-test="reset-password-button">
-                    Reset password
-                </Button>
+                <Button type="submit" class="mt-4 w-full" :disabled="processing" :loading="processing" data-test="reset-password-button"> Reset password </Button>
             </div>
         </Form>
     </AuthLayout>

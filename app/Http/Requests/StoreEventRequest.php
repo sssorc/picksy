@@ -36,7 +36,7 @@ class StoreEventRequest extends FormRequest
             ],
             'password' => ['nullable', 'string', 'max:255'],
             'grading_password' => ['nullable', 'string', 'max:255'],
-            'start_datetime' => ['required', 'date', 'after:now'],
+            'start_datetime' => ['required', 'date', 'after_or_equal:today'],
         ];
     }
 
@@ -50,7 +50,7 @@ class StoreEventRequest extends FormRequest
         return [
             'slug.regex' => 'The event path must be lowercase letters, numbers, and hyphens only.',
             'slug.unique' => 'This event path is already taken. Please choose a different one.',
-            'start_datetime.after' => 'The event start time must be in the future.',
+            'start_datetime.after_or_equal' => 'The event start time must be today or in the future.',
         ];
     }
 }

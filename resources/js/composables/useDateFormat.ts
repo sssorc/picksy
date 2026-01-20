@@ -10,4 +10,3 @@ export function formatEventDateTime(dateString: string): string {
 export function useDateFormat() {
     return { formatEventDateTime };
 }
-

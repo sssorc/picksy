@@ -113,9 +113,7 @@ function cancelDuplicate() {
                         <InputError :message="errors.password" />
                     </div>
 
-                    <Button type="submit" class="w-full" :disabled="processing" :loading="processing">
-                        Continue
-                    </Button>
+                    <Button type="submit" class="w-full" :disabled="processing" :loading="processing"> Continue </Button>
                 </form>
             </div>
         </div>
@@ -134,9 +132,7 @@ function cancelDuplicate() {
 
                 <div class="flex gap-3">
                     <Button variant="outline" class="flex-1" @click="cancelDuplicate" :disabled="processing"> Cancel </Button>
-                    <Button class="flex-1" @click="confirmIdentity" :disabled="processing" :loading="processing">
-                        Yes, that's me
-                    </Button>
+                    <Button class="flex-1" @click="confirmIdentity" :disabled="processing" :loading="processing"> Yes, that's me </Button>
                 </div>
             </div>
         </div>

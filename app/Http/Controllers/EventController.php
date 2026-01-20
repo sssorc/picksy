@@ -48,6 +48,6 @@ class EventController extends Controller
             $event->delete();
         }
 
-        return redirect()->route('home')->with('success', 'Event deleted successfully.');
+        return redirect()->route('dashboard')->with('success', 'Event deleted successfully.');
     }
 }

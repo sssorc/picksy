@@ -45,9 +45,7 @@ function handleSubmit() {
                         <InputError :message="form.errors.password" />
                     </div>
 
-                    <Button type="submit" class="w-full" :disabled="form.processing" :loading="form.processing">
-                        Continue
-                    </Button>
+                    <Button type="submit" class="w-full" :disabled="form.processing" :loading="form.processing"> Continue </Button>
                 </form>
             </div>
         </div>

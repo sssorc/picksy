@@ -6,7 +6,7 @@ import { formatEventDateTime } from '@/composables/useDateFormat';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { edit as eventRoute } from '@/routes/event';
 import { Head, Link } from '@inertiajs/vue3';
-import { PhCalendarDot, PhCheckCircle, PhCircleDashed, PhKey, PhPlay, PhRocketLaunch, PhUsers } from '@phosphor-icons/vue';
+import { PhCalendarDot, PhCheckCircle, PhCircleDashed, PhClipboardText, PhKey, PhPlay, PhRocketLaunch, PhUsers } from '@phosphor-icons/vue';
 import { computed } from 'vue';
 
 interface Participant {
@@ -39,7 +39,19 @@ const eventStatus = computed(() => {
     if (!props.event) return null;
     if (!props.event.is_published) return 'draft';
     if (!props.event.has_started) return 'scheduled';
-    return 'live';
+
+    // Check if all questions are graded
+    if (props.gradedCount === props.totalCount && props.totalCount > 0) {
+        return 'completed';
+    }
+
+    // Check if any questions are graded
+    if (props.gradedCount > 0) {
+        return 'live-grading';
+    }
+
+    // Event is live and accepting picks
+    return 'live-accepting';
 });
 </script>
 
@@ -76,9 +88,17 @@ const eventStatus = computed(() => {
                                 </CardDescription>
                             </div>
                             <!-- Status Badge -->
-                            <span v-if="eventStatus === 'live'" class="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
+                            <span v-if="eventStatus === 'completed'" class="inline-flex items-center gap-1.5 rounded-full bg-purple-100 px-2.5 py-1 text-xs font-medium text-purple-700 dark:bg-purple-900/50 dark:text-purple-300">
+                                <PhCheckCircle class="size-3.5" weight="fill" />
+                                Completed
+                            </span>
+                            <span v-else-if="eventStatus === 'live-grading'" class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
+                                <PhClipboardText class="size-3.5" />
+                                Live - Grading
+                            </span>
+                            <span v-else-if="eventStatus === 'live-accepting'" class="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
                                 <PhPlay class="size-3.5" weight="fill" />
-                                Live
+                                Live - Accepting Picks
                             </span>
                             <span v-else-if="eventStatus === 'scheduled'" class="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
                                 <PhRocketLaunch class="size-3.5" />
@@ -92,21 +112,7 @@ const eventStatus = computed(() => {
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="grid gap-4 sm:grid-cols-3">
-                            <div class="rounded-lg border bg-muted/40 p-4">
-                                <div class="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <PhUsers class="size-4" />
-                                    Participants
-                                </div>
-                                <p class="mt-1 text-2xl font-semibold">{{ props.participants.length }}</p>
-                            </div>
-                            <div class="rounded-lg border bg-muted/40 p-4">
-                                <div class="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <PhCheckCircle class="size-4" />
-                                    Questions Graded
-                                </div>
-                                <p class="mt-1 text-2xl font-semibold">{{ props.gradedCount }} / {{ props.totalCount }}</p>
-                            </div>
-                            <div class="rounded-lg border bg-muted/40 p-4">
+							<div class="rounded-lg border bg-muted/40 p-4">
                                 <div class="flex items-center gap-2 text-sm text-muted-foreground">
                                     <PhCalendarDot class="size-4" />
                                     Event URL
@@ -121,6 +127,21 @@ const eventStatus = computed(() => {
                                     </span>
                                 </div>
                             </div>
+                            <div class="rounded-lg border bg-muted/40 p-4">
+                                <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <PhUsers class="size-4" />
+                                    Participants
+                                </div>
+                                <p class="mt-1 text-2xl font-semibold">{{ props.participants.length }}</p>
+                            </div>
+                            <div class="rounded-lg border bg-muted/40 p-4">
+                                <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <PhCheckCircle class="size-4" />
+                                    Questions Graded
+                                </div>
+                                <p class="mt-1 text-2xl font-semibold">{{ props.gradedCount }} / {{ props.totalCount }}</p>
+                            </div>
+                            
                         </div>
 
                         <!-- Grading Info -->
@@ -177,11 +198,25 @@ const eventStatus = computed(() => {
                     <AlertDescription class="text-blue-700 dark:text-blue-300"> Your event is published but hasn't started yet. Participants will be able to submit picks once the event starts. </AlertDescription>
                 </Alert>
 
-                <!-- No Participants Yet - Live -->
-                <Alert v-else-if="eventStatus === 'live'" class="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/50">
-                    <PhUsers class="size-5 text-blue-600 dark:text-blue-400" />
-                    <AlertTitle class="text-blue-800 dark:text-blue-200">Waiting for participants</AlertTitle>
-                    <AlertDescription class="text-blue-700 dark:text-blue-300"> Your event is live! Share the link with your guests to start collecting picks. </AlertDescription>
+                <!-- No Participants Yet - Live Accepting -->
+                <Alert v-else-if="eventStatus === 'live-accepting'" class="border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/50">
+                    <PhUsers class="size-5 text-emerald-600 dark:text-emerald-400" />
+                    <AlertTitle class="text-emerald-800 dark:text-emerald-200">Waiting for participants</AlertTitle>
+                    <AlertDescription class="text-emerald-700 dark:text-emerald-300"> Your event is live! Share the link with your guests to start collecting picks. </AlertDescription>
+                </Alert>
+
+                <!-- No Participants Yet - Live Grading -->
+                <Alert v-else-if="eventStatus === 'live-grading'" class="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/50">
+                    <PhClipboardText class="size-5 text-amber-600 dark:text-amber-400" />
+                    <AlertTitle class="text-amber-800 dark:text-amber-200">Grading in progress</AlertTitle>
+                    <AlertDescription class="text-amber-700 dark:text-amber-300"> Questions are being graded. No new picks can be accepted once grading has started. </AlertDescription>
+                </Alert>
+
+                <!-- No Participants Yet - Completed -->
+                <Alert v-else-if="eventStatus === 'completed'" class="border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-950/50">
+                    <PhCheckCircle class="size-5 text-purple-600 dark:text-purple-400" />
+                    <AlertTitle class="text-purple-800 dark:text-purple-200">Event completed</AlertTitle>
+                    <AlertDescription class="text-purple-700 dark:text-purple-300"> All questions have been graded. Unfortunately, no participants submitted picks for this event. </AlertDescription>
                 </Alert>
             </template>
         </div>

@@ -50,9 +50,7 @@ defineProps<{
                     </Label>
                 </div>
 
-                <Button type="submit" class="mt-4 w-full" :tabindex="4" :disabled="processing" :loading="processing" data-test="login-button">
-                    Log in
-                </Button>
+                <Button type="submit" class="mt-4 w-full" :tabindex="4" :disabled="processing" :loading="processing" data-test="login-button"> Log in </Button>
             </div>
 
             <div class="text-center text-sm text-muted-foreground" v-if="canRegister">

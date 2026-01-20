@@ -217,7 +217,7 @@ async function submitPicks() {
             </div>
             <div v-else>
                 <h2>Picks are closed</h2>
-                <p>You can no longer submit picks.</p>
+                <p>You can no longer submit picks since one or more questions have been answered.</p>
             </div>
         </template>
 

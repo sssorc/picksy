@@ -9,6 +9,6 @@ class HelpController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('admin/HelpPage');
+        return Inertia::render('HelpPage');
     }
 }

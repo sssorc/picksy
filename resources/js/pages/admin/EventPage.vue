@@ -62,6 +62,12 @@ const dateFormat = {
     input: 'LLL d, yyyy, h:mma',
 };
 
+const minDate = computed(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+});
+
 async function handleSubmit() {
     saving.value = true;
     errorMessage.value = '';
@@ -132,7 +138,7 @@ async function deleteEvent() {
                             <Label for="start_datetime">Event Start Date & Time</Label>
                             <p v-if="userEvent?.has_started" class="text-sm text-gray-500">{{ formatEventDateTime(userEvent.start_datetime) }}</p>
                             <template v-else>
-                                <VueDatePicker id="start_datetime" v-model="form.start_datetime" :disabled="saving" :enable-time-picker="true" :formats="dateFormat" :min-date="new Date()" placeholder="Select date and time" required />
+                                <VueDatePicker id="start_datetime" v-model="form.start_datetime" :disabled="saving" :enable-time-picker="true" :formats="dateFormat" :min-date="minDate" placeholder="Select date and time" required />
                                 <p class="text-sm text-gray-500">Users cannot submit picks before this time.</p>
                             </template>
                         </div>

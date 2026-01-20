@@ -41,9 +41,7 @@ const appName = page.props.name as string;
 
             <div class="mx-auto max-w-6xl px-6">
                 <div class="mx-auto max-w-3xl text-center">
-                    <div
-                        class="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-1.5 text-sm font-medium text-zinc-600 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
-                    >
+                    <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-1.5 text-sm font-medium text-zinc-600 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
                         <span class="relative flex size-2">
                             <span class="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
                             <span class="relative inline-flex size-2 rounded-full bg-emerald-500"></span>
@@ -51,17 +49,12 @@ const appName = page.props.name as string;
                         Perfect for weddings & special events
                     </div>
 
-                    <h1
-                        class="bg-gradient-to-br from-zinc-900 via-zinc-700 to-zinc-900 bg-clip-text text-5xl font-bold tracking-tight text-transparent sm:text-6xl lg:text-7xl dark:from-white dark:via-zinc-300 dark:to-white"
-                    >
+                    <h1 class="bg-gradient-to-br from-zinc-900 via-zinc-700 to-zinc-900 bg-clip-text text-5xl font-bold tracking-tight text-transparent sm:text-6xl lg:text-7xl dark:from-white dark:via-zinc-300 dark:to-white">
                         Make Your Event
                         <span class="block text-rose-600 dark:text-rose-400">Unforgettable</span>
                     </h1>
 
-                    <p class="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-                        Create fun prediction games for your wedding, party, or special event. Guests compete to guess the outcomes &mdash; from first dance songs to speech
-                        lengths.
-                    </p>
+                    <p class="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">Create fun prediction games for your wedding, party, or special event. Guests compete to guess the outcomes &mdash; from first dance songs to speech lengths.</p>
 
                     <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                         <Button size="lg" class="h-12 px-8 text-base" as-child>
@@ -86,35 +79,21 @@ const appName = page.props.name as string;
                 <div class="mt-16 grid gap-8 md:grid-cols-3">
                     <!-- Step 1 -->
                     <div class="group relative rounded-2xl border border-zinc-200 bg-zinc-50 p-8 transition-all hover:border-rose-200 hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-rose-900">
-                        <div
-                            class="mb-6 flex size-14 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 text-2xl font-bold text-white shadow-lg shadow-rose-500/25"
-                        >
-                            1
-                        </div>
+                        <div class="mb-6 flex size-14 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 text-2xl font-bold text-white shadow-lg shadow-rose-500/25">1</div>
                         <h3 class="text-xl font-semibold text-zinc-900 dark:text-white">Create Questions</h3>
-                        <p class="mt-3 text-zinc-600 dark:text-zinc-400">
-                            Add up to 16 multiple choice questions about your event. Choose from popular templates or write your own.
-                        </p>
+                        <p class="mt-3 text-zinc-600 dark:text-zinc-400">Add up to 16 multiple choice questions about your event. Choose from popular templates or write your own.</p>
                     </div>
 
                     <!-- Step 2 -->
                     <div class="group relative rounded-2xl border border-zinc-200 bg-zinc-50 p-8 transition-all hover:border-amber-200 hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-amber-900">
-                        <div
-                            class="mb-6 flex size-14 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-2xl font-bold text-white shadow-lg shadow-amber-500/25"
-                        >
-                            2
-                        </div>
+                        <div class="mb-6 flex size-14 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-2xl font-bold text-white shadow-lg shadow-amber-500/25">2</div>
                         <h3 class="text-xl font-semibold text-zinc-900 dark:text-white">Share With Guests</h3>
                         <p class="mt-3 text-zinc-600 dark:text-zinc-400">Get a unique link and QR code to share. Guests submit their predictions before the event starts.</p>
                     </div>
 
                     <!-- Step 3 -->
                     <div class="group relative rounded-2xl border border-zinc-200 bg-zinc-50 p-8 transition-all hover:border-emerald-200 hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-emerald-900">
-                        <div
-                            class="mb-6 flex size-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-2xl font-bold text-white shadow-lg shadow-emerald-500/25"
-                        >
-                            3
-                        </div>
+                        <div class="mb-6 flex size-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-2xl font-bold text-white shadow-lg shadow-emerald-500/25">3</div>
                         <h3 class="text-xl font-semibold text-zinc-900 dark:text-white">Live Leaderboard</h3>
                         <p class="mt-3 text-zinc-600 dark:text-zinc-400">Grade answers as they happen and watch the leaderboard update in real-time. Crown the winner!</p>
                     </div>
@@ -132,33 +111,23 @@ const appName = page.props.name as string;
 
                         <ul class="mt-8 space-y-4">
                             <li class="flex items-start gap-3">
-                                <span class="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-sm text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
-                                    >?</span
-                                >
+                                <span class="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-sm text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">?</span>
                                 <span class="text-zinc-700 dark:text-zinc-300">How long will the best man's speech be?</span>
                             </li>
                             <li class="flex items-start gap-3">
-                                <span class="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-sm text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
-                                    >?</span
-                                >
+                                <span class="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-sm text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">?</span>
                                 <span class="text-zinc-700 dark:text-zinc-300">What song will play for the first dance?</span>
                             </li>
                             <li class="flex items-start gap-3">
-                                <span class="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-sm text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
-                                    >?</span
-                                >
+                                <span class="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-sm text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">?</span>
                                 <span class="text-zinc-700 dark:text-zinc-300">Who will cry first during the ceremony?</span>
                             </li>
                             <li class="flex items-start gap-3">
-                                <span class="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-sm text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
-                                    >?</span
-                                >
+                                <span class="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-sm text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">?</span>
                                 <span class="text-zinc-700 dark:text-zinc-300">How many times will "I do" be said?</span>
                             </li>
                             <li class="flex items-start gap-3">
-                                <span class="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-sm text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
-                                    >?</span
-                                >
+                                <span class="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-sm text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">?</span>
                                 <span class="text-zinc-700 dark:text-zinc-300">Who will catch the bouquet?</span>
                             </li>
                         </ul>
@@ -232,4 +201,3 @@ const appName = page.props.name as string;
         </footer>
     </div>
 </template>
-

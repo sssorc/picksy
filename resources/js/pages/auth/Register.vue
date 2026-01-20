@@ -40,9 +40,7 @@ import { Form, Head } from '@inertiajs/vue3';
                     <InputError :message="errors.password_confirmation" />
                 </div>
 
-                <Button type="submit" class="mt-2 w-full" tabindex="5" :disabled="processing" :loading="processing" data-test="register-user-button">
-                    Create account
-                </Button>
+                <Button type="submit" class="mt-2 w-full" tabindex="5" :disabled="processing" :loading="processing" data-test="register-user-button"> Create account </Button>
             </div>
 
             <div class="text-center text-sm text-muted-foreground">
