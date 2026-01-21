@@ -22,33 +22,33 @@ interface FAQ {
 const faqs: FAQ[] = [
     {
         id: '1',
-        question: 'How do I create an event?',
-        answer: 'To create an event, sign up for an account and navigate to the Event page. Fill in your event details including the title, date, path, and optional password. Once saved, you can proceed to add questions.',
+        question: 'What is grading?',
+        answer: 'Grading is the process of selecting the correct answer for a question. This is done by the event creator or a designated person at picksy.com/<your-event>/grade. Questions can be graded in bulk or one at a time.',
     },
     {
         id: '2',
-        question: 'How many questions can I add?',
-        answer: 'You can add up to 16 multiple-choice questions to your event. Each question can have between 2 and 6 answer options. You can also add an optional tie-breaker question with a text input answer.',
+        question: 'My event already started, can I still update questions?',
+        answer: 'You can still add, delete, and update questions up until the first person sumbits their picks. If they already have the Picks page open while you make changes, they will be prompted to re-submit if they try to submit with old questions.',
     },
     {
         id: '3',
-        question: 'How much does it cost to publish an event?',
-        answer: 'Publishing an event requires a one-time payment. Once paid, your event is live and accessible to participants. You can make changes to your questions and event details even after publishing without any additional cost.',
+        question: 'How long do I have to grade questions?',
+        answer: 'You have 30 days after the event start date to grade questions. All event data will be deleted after that period.',
     },
     {
         id: '4',
-        question: 'Can participants change their answers after submitting?',
-        answer: 'No, participants can only submit their picks once and cannot change them. This ensures fairness and maintains the integrity of the predictions game.',
+        question: 'Can I have more than one event?',
+        answer: 'Currently you can only have a single event. However you can create and publish a new event after the current one is deleted.',
     },
     {
         id: '5',
-        question: 'How does grading work?',
-        answer: 'You (or someone you designate) can grade questions by visiting the /grade page for your event. This page is protected by a grading password that you set. Questions can be graded as events unfold - you don\'t need to grade them all at once.',
+        question: '',
+        answer: '',
     },
     {
         id: '6',
-        question: 'What is the tie-breaker question?',
-        answer: 'The tie-breaker question is an optional text-input question that can help determine a winner if multiple participants have the same number of correct answers. It doesn\'t count toward the main score.',
+        question: '',
+        answer: '',
     },
     {
         id: '7',

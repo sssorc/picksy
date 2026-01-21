@@ -273,9 +273,7 @@ test('questions cannot be updated after entries have been submitted', function (
     ];
 
     $response = $this->actingAs($this->user)
-        ->postJson(route('questions.store'), $questionsData);
-
-    $response->assertStatus(422);
+        ->postJson(route('questions.store'), $questionsData);    $response->assertStatus(422);
     $response->assertJson([
         'message' => 'Questions cannot be updated after entries have been submitted.',
     ]);

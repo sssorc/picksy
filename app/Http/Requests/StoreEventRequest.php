@@ -49,7 +49,7 @@ class StoreEventRequest extends FormRequest
     {
         return [
             'slug.regex' => 'The event path must be lowercase letters, numbers, and hyphens only.',
-            'slug.unique' => 'This event path is already taken. Please choose a different one.',
+            'slug.unique' => 'URL is is already taken. Please choose a different one.',
             'start_datetime.after_or_equal' => 'The event start time must be today or in the future.',
         ];
     }

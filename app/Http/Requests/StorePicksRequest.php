@@ -70,7 +70,7 @@ class StorePicksRequest extends FormRequest
             if ($currentQuestionIds !== $submittedQuestionIds) {
                 $validator->errors()->add(
                     'picks',
-                    'The questions have been updated. Please refresh the page and submit your picks again.'
+                    'Some questions have been updated since you loaded the page. Please refresh the page and submit your picks again.'
                 );
 
                 return;
@@ -82,7 +82,7 @@ class StorePicksRequest extends FormRequest
             if ($hasQuestionUpdate) {
                 $validator->errors()->add(
                     'picks',
-                    'The questions have been updated. Please refresh the page and submit your picks again.'
+                    'Some questions have been updated since you loaded the page. Please refresh the page and submit your picks again.'
                 );
 
                 return;
@@ -97,7 +97,7 @@ class StorePicksRequest extends FormRequest
             if ($hasAnswerUpdate) {
                 $validator->errors()->add(
                     'picks',
-                    'The answers have been updated. Please refresh the page and submit your picks again.'
+                    'Some questions have been updated since you loaded the page. Please refresh the page and submit your picks again.'
                 );
             }
         });

@@ -96,4 +96,9 @@ class Event extends Model
     {
         return $this->participants()->whereNotNull('submitted_at')->count();
     }
+
+    public function hasSubmittedEntries(): bool
+    {
+        return $this->participants()->whereNotNull('submitted_at')->exists();
+    }
 }

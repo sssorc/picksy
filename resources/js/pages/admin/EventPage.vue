@@ -185,12 +185,6 @@ async function deleteEvent() {
                         <Input id="password" v-model="form.password" class="w-xs max-w-full" type="text" placeholder="Leave blank for no password" :disabled="saving" />
                         <p class="text-sm text-gray-500">Participants will need this password to access your event</p>
                     </div>
-
-                    <div class="space-y-2">
-                        <Label for="grading_password">Grading Passphrase</Label>
-                        <p v-if="userEvent?.grading_password" class="text-sm text-gray-500">{{ userEvent.grading_password }}</p>
-                        <p v-else class="text-sm text-gray-500">This will be auto-generated after saving.</p>
-                    </div>
                 </CardContent>
             </Card>
 
@@ -214,7 +208,9 @@ async function deleteEvent() {
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
-                <Button type="submit" :disabled="saving" class="ml-auto" :loading="saving">Save Event</Button>
+                <Button type="submit" :disabled="saving" class="ml-auto" :loading="saving">
+					{{ userEvent ? 'Update Event' : 'Create Event' }}
+				</Button>
             </div>
         </form>
     </AppLayout>
