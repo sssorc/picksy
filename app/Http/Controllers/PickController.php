@@ -52,6 +52,7 @@ class PickController extends Controller
                     'id' => $question->id,
                     'question_text' => $question->question_text,
                     'is_tiebreaker' => $question->is_tiebreaker,
+                    'updated_at' => $question->updated_at->timestamp,
                     'answers' => $question->answers->map(function ($answer) {
                         return [
                             'id' => $answer->id,

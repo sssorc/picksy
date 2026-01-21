@@ -33,7 +33,7 @@ test('participant can submit picks when under max entries', function () {
     ]);
 
     $cookieName = "event_{$this->event->id}_participant";
-    
+
     $response = $this->withUnencryptedCookie($cookieName, (string) $participant->id)
         ->postJson(route('picks.store', $this->event->slug), [
             'picks' => [
@@ -42,6 +42,7 @@ test('participant can submit picks when under max entries', function () {
                     'answer_id' => $this->answers->first()->id,
                 ],
             ],
+            'loaded_at' => now()->timestamp,
         ]);
 
     $response->assertSuccessful();
@@ -58,7 +59,7 @@ test('participant can submit picks at exactly max entries limit', function () {
         'event_id' => $this->event->id,
     ]);
 
-    $response = $this->withCookie("event_{$this->event->id}_participant", $participant->id)
+    $response = $this->withUnencryptedCookie("event_{$this->event->id}_participant", (string) $participant->id)
         ->postJson(route('picks.store', $this->event->slug), [
             'picks' => [
                 [
@@ -66,6 +67,7 @@ test('participant can submit picks at exactly max entries limit', function () {
                     'answer_id' => $this->answers->first()->id,
                 ],
             ],
+            'loaded_at' => now()->timestamp,
         ]);
 
     $response->assertSuccessful();
@@ -83,7 +85,7 @@ test('participant cannot submit picks when max entries reached', function () {
         'event_id' => $this->event->id,
     ]);
 
-    $response = $this->withCookie("event_{$this->event->id}_participant", $participant->id)
+    $response = $this->withUnencryptedCookie("event_{$this->event->id}_participant", (string) $participant->id)
         ->postJson(route('picks.store', $this->event->slug), [
             'picks' => [
                 [
@@ -91,6 +93,7 @@ test('participant cannot submit picks when max entries reached', function () {
                     'answer_id' => $this->answers->first()->id,
                 ],
             ],
+            'loaded_at' => now()->timestamp,
         ]);
 
     $response->assertStatus(400);
@@ -110,7 +113,7 @@ test('unlimited entries allows any number of participants', function () {
         'event_id' => $this->event->id,
     ]);
 
-    $response = $this->withCookie("event_{$this->event->id}_participant", $participant->id)
+    $response = $this->withUnencryptedCookie("event_{$this->event->id}_participant", (string) $participant->id)
         ->postJson(route('picks.store', $this->event->slug), [
             'picks' => [
                 [
@@ -118,6 +121,7 @@ test('unlimited entries allows any number of participants', function () {
                     'answer_id' => $this->answers->first()->id,
                 ],
             ],
+            'loaded_at' => now()->timestamp,
         ]);
 
     $response->assertSuccessful();
@@ -140,7 +144,7 @@ test('participants who have not submitted do not count towards limit', function 
         'event_id' => $this->event->id,
     ]);
 
-    $response = $this->withCookie("event_{$this->event->id}_participant", $participant->id)
+    $response = $this->withUnencryptedCookie("event_{$this->event->id}_participant", (string) $participant->id)
         ->postJson(route('picks.store', $this->event->slug), [
             'picks' => [
                 [
@@ -148,8 +152,161 @@ test('participants who have not submitted do not count towards limit', function 
                     'answer_id' => $this->answers->first()->id,
                 ],
             ],
+            'loaded_at' => now()->timestamp,
         ]);
 
     $response->assertSuccessful();
     expect($this->event->getSubmittedEntriesCount())->toBe(9);
+});
+
+test('picks are rejected when questions have changed', function () {
+    $participant = Participant::factory()->create([
+        'event_id' => $this->event->id,
+    ]);
+
+    $loadedAt = now()->timestamp;
+
+    // Create a second question after participant loaded the page
+    sleep(1);
+    $newQuestion = Question::factory()->create([
+        'event_id' => $this->event->id,
+        'is_tiebreaker' => false,
+    ]);
+
+    Answer::factory()->count(2)->create([
+        'question_id' => $newQuestion->id,
+    ]);
+
+    // Try to submit picks with only the original question
+    $response = $this->withUnencryptedCookie("event_{$this->event->id}_participant", (string) $participant->id)
+        ->postJson(route('picks.store', $this->event->slug), [
+            'picks' => [
+                [
+                    'question_id' => $this->question->id,
+                    'answer_id' => $this->answers->first()->id,
+                ],
+            ],
+            'loaded_at' => $loadedAt,
+        ]);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['picks']);
+    expect($response->json('errors.picks.0'))->toContain('questions have been updated');
+});
+
+test('picks are rejected when question was deleted', function () {
+    $participant = Participant::factory()->create([
+        'event_id' => $this->event->id,
+    ]);
+
+    $deletedQuestionId = $this->question->id;
+    $deletedAnswerId = $this->answers->first()->id;
+
+    // Delete the question
+    $this->question->delete();
+
+    // Try to submit picks with the deleted question
+    $response = $this->withUnencryptedCookie("event_{$this->event->id}_participant", (string) $participant->id)
+        ->postJson(route('picks.store', $this->event->slug), [
+            'picks' => [
+                [
+                    'question_id' => $deletedQuestionId,
+                    'answer_id' => $deletedAnswerId,
+                ],
+            ],
+            'loaded_at' => now()->timestamp,
+        ]);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['picks.0.question_id']);
+});
+
+test('picks are rejected when question text was updated', function () {
+    $participant = Participant::factory()->create([
+        'event_id' => $this->event->id,
+    ]);
+
+    // Capture when page was loaded
+    $loadedAt = now()->timestamp;
+
+    // Wait a moment and update the question text
+    sleep(1);
+    $this->question->update(['question_text' => 'Updated question text?']);
+
+    // Try to submit picks with the old loaded_at timestamp
+    $response = $this->withUnencryptedCookie("event_{$this->event->id}_participant", (string) $participant->id)
+        ->postJson(route('picks.store', $this->event->slug), [
+            'picks' => [
+                [
+                    'question_id' => $this->question->id,
+                    'answer_id' => $this->answers->first()->id,
+                ],
+            ],
+            'loaded_at' => $loadedAt,
+        ]);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['picks']);
+    expect($response->json('errors.picks.0'))->toContain('questions have been updated');
+});
+
+test('picks are rejected when answers were modified', function () {
+    $participant = Participant::factory()->create([
+        'event_id' => $this->event->id,
+    ]);
+
+    // Capture when page was loaded
+    $loadedAt = now()->timestamp;
+
+    // Wait a moment and update an answer
+    sleep(1);
+    $this->answers->first()->update(['answer_text' => 'Updated answer text']);
+
+    // Try to submit picks with the old loaded_at timestamp
+    $response = $this->withUnencryptedCookie("event_{$this->event->id}_participant", (string) $participant->id)
+        ->postJson(route('picks.store', $this->event->slug), [
+            'picks' => [
+                [
+                    'question_id' => $this->question->id,
+                    'answer_id' => $this->answers->first()->id,
+                ],
+            ],
+            'loaded_at' => $loadedAt,
+        ]);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['picks']);
+    expect($response->json('errors.picks.0'))->toContain('answers have been updated');
+});
+
+test('picks are rejected when new answers were added', function () {
+    $participant = Participant::factory()->create([
+        'event_id' => $this->event->id,
+    ]);
+
+    // Capture when page was loaded
+    $loadedAt = now()->timestamp;
+
+    // Wait a moment and add a new answer
+    sleep(1);
+    Answer::factory()->create([
+        'question_id' => $this->question->id,
+        'answer_text' => 'Brand new answer',
+    ]);
+
+    // Try to submit picks with the old loaded_at timestamp
+    $response = $this->withUnencryptedCookie("event_{$this->event->id}_participant", (string) $participant->id)
+        ->postJson(route('picks.store', $this->event->slug), [
+            'picks' => [
+                [
+                    'question_id' => $this->question->id,
+                    'answer_id' => $this->answers->first()->id,
+                ],
+            ],
+            'loaded_at' => $loadedAt,
+        ]);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['picks']);
+    expect($response->json('errors.picks.0'))->toContain('answers have been updated');
 });

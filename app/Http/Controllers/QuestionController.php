@@ -6,10 +6,10 @@ use App\Http\Requests\StoreQuestionsRequest;
 use App\Models\Answer;
 use App\Models\Question;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
 
 class QuestionController extends Controller
 {
@@ -35,8 +35,8 @@ class QuestionController extends Controller
             return response()->json(['message' => 'Event not found.'], 404);
         }
 
-        if ($event->hasStarted()) {
-            return response()->json(['message' => 'Questions cannot be updated after the event has started.'], 422);
+        if ($event->hasSubmittedEntries()) {
+            return response()->json(['message' => 'Questions cannot be updated after entries have been submitted.'], 422);
         }
 
         DB::transaction(function () use ($request, $event) {

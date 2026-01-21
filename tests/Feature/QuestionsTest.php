@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\User;
+use App\Models\Answer;
 use App\Models\Event;
 use App\Models\Question;
-use App\Models\Answer;
+use App\Models\User;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
@@ -24,7 +24,7 @@ test('user can view questions page', function () {
 
 test('user cannot view questions page without event', function () {
     $userWithoutEvent = User::factory()->create();
-    
+
     $response = $this->actingAs($userWithoutEvent)->get(route('questions.index'));
 
     $response->assertRedirect(route('event.edit'));
@@ -251,3 +251,32 @@ test('answers are limited to 6 per question', function () {
     $response->assertJsonValidationErrors(['questions.0.answers']);
 });
 
+test('questions cannot be updated after entries have been submitted', function () {
+    // Create a participant with a submitted entry
+    $participant = \App\Models\Participant::factory()->create([
+        'event_id' => $this->event->id,
+        'submitted_at' => now(),
+    ]);
+
+    $questionsData = [
+        'questions' => [
+            [
+                'id' => null,
+                'question_text' => 'New question?',
+                'is_tiebreaker' => false,
+                'answers' => [
+                    ['id' => null, 'answer_text' => 'Answer 1', 'order' => 0],
+                    ['id' => null, 'answer_text' => 'Answer 2', 'order' => 1],
+                ],
+            ],
+        ],
+    ];
+
+    $response = $this->actingAs($this->user)
+        ->postJson(route('questions.store'), $questionsData);
+
+    $response->assertStatus(422);
+    $response->assertJson([
+        'message' => 'Questions cannot be updated after entries have been submitted.',
+    ]);
+});

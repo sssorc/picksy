@@ -20,6 +20,7 @@ interface Question {
     id: number;
     question_text: string;
     is_tiebreaker: boolean;
+    updated_at: number;
     answers: Answer[];
 }
 
@@ -58,6 +59,9 @@ defineOptions({
 });
 
 const hasSubmittedPicks = computed(() => props.picks !== null);
+
+// Capture when the page was loaded
+const loadedAt = ref(Math.floor(Date.now() / 1000));
 
 // Separate regular questions from tiebreaker for easier rendering
 const regularQuestions = computed(() => props.questions.filter((q) => !q.is_tiebreaker));
@@ -107,6 +111,7 @@ async function submitPicks() {
     try {
         const { data } = await axios.post(store.url(props.event.slug), {
             picks: picksData,
+            loaded_at: loadedAt.value,
         });
 
         if (data.redirect) {
